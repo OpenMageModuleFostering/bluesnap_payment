@@ -74,46 +74,47 @@
         </reference>
     </bluesnap_checkout_callback>
 
-    <!-- Add CSE script on the checkout page -->
-    <checkout_onepage_index>
-        <reference name="head">
-            <action method="addItem">
-                <type>skin_css</type>
-                <name>css/bluesnap/buynow/checkout.css</name>
-            </action>  
+	<checkout_onepage_index>
+	        <reference name="head">
+	            <action method="addItem">
+	                <type>skin_css</type>
+	                <name>css/bluesnap/buynow/checkout.css</name>
+	            </action>  
          
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/bluesnap/credit-card-detect.js</name>
-            </action>
+	            <action method="addItem">
+	                <type>skin_js</type>
+	                <name>js/bluesnap/credit-card-detect.js</name>
+	            </action>
 
-            <action method="addItem">
-                <type>skin_js</type>
-                <name>js/bluesnap/payform.js</name>
-            </action>
+	            <action method="addItem">
+	                <type>skin_js</type>
+	                <name>js/bluesnap/payform.js</name>
+	            </action>
 
-             <action method="addItem">
-                <type>js</type>
-                <name>lib/jquery/jquery-ui/jquery-ui.js</name>
-            </action>
-             <action method="addItem">
-                <type>js_css</type>
-                <name>lib/jquery/jquery-ui/jquery-ui.css</name>
-            </action>
-
-            <block type="core/text" name="bluesnap.cse">
-                <action method="setText">
-                    <text>
-                        <![CDATA[<script type="text/javascript" src="https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js"></script>]]>
-                    </text>
+                <action method="addItem" ifconfig="bluesnap/general/include_jquery">
+                    <type>js</type>
+                    <name>lib/jquery/jquery-3.0.0.min.js</name>
                 </action>
-            </block>
-        </reference>
-    </checkout_onepage_index> 
+                <action method="addItem" ifconfig="bluesnap/general/include_jquery">
+                    <type>js</type>
+                    <name>lib/jquery/bluesnap-noconflict.js</name>
+                </action>
+                <action method="addItem">
+	                <type>js</type>
+	                <name>lib/jquery/jquery-ui/jquery-ui.js</name>
+	            </action>
+	             <action method="addItem">
+	                <type>js_css</type>
+	                <name>lib/jquery/jquery-ui/jquery-ui.css</name>
+	            </action>
 
-
-    
-
-
-
+	            <block type="core/text" name="bluesnap.cse">
+	                <action method="setText">
+	                    <text>
+	                        <![CDATA[<script type="text/javascript" src="https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js"></script>]]>
+	                    </text>
+	                </action>
+	            </block>
+	        </reference>
+		</checkout_onepage_index>
 </layout>

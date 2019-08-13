@@ -196,94 +196,7 @@ class Bluesnap_Payment_Model_Observer
 
     }
 
-    //check if server is secured
-    function checkSecure($observer)
-    {
-        $postData = $observer->getEvent()->getData();
-        if ($this->getIsSandbox($postData) == '0') {
-            if (!isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "on") {
-                // set sandbox mode becasue admin is not secured
-                $this->setSandbox($postData);
-
-                //check if ssl is installed to show the right message
-                if (!$this->is_exist_ssl(Mage::getBaseUrl())) Mage::throwException(Mage::helper('bluesnap')->__('Due to Payment Security reasons, BlueSnap’s payment can’t be set to production on an unsecured page. Please ensure you are using HTTPS.'));
-                else Mage::throwException(Mage::helper('bluesnap')->__('Due to Payment Security reasons, BlueSnap’s payment can’t be set to production on an unsecured page. Please ensure you enable secure URLs in admin.'));
-            } else {
-                if (!Mage::app()->getStore()->isFrontUrlSecure()) {
-                    $this->setSandbox($postData);
-                    Mage::throwException(Mage::helper('bluesnap')->__('Due to Payment Security reasons, BlueSnap’s payment can’t be set to production on an unsecured page. Please ensure you enable secure URLs in frontend.'));
-
-                }
-                if (!Mage::app()->getStore()->isAdminUrlSecure()) {
-                    $this->setSandbox($postData);
-                    Mage::throwException(Mage::helper('bluesnap')->__('Due to Payment Security reasons, BlueSnap’s payment can’t be set to production on an unsecured page. Please ensure you enable secure URLs in admin.'));
-                }
-
-            }
-        }
-    }
-
-    private function getIsSandbox($postData)
-    {
-        if (is_null($postData['store']) && $postData['website']) //check for website scope
-        {
-            $scopeId = Mage::getModel('core/website')->load($postData['website'])->getId();
-            $isSnadBox = Mage::app()->getWebsite($scopeId)->getConfig('bluesnap/general/is_sandbox_mode');
-        } elseif ($postData['store']) //check for store scope
-        {
-            $scopeId = Mage::getModel('core/store')->load($postData['store'])->getId();
-            $isSnadBox = Mage::app()->getWebsite($scopeId)->getConfig('bluesnap/general/is_sandbox_mode');
-        } else //for default scope
-        {
-            $scopeId = 0;
-            $isSnadBox = Mage::getStoreConfig('bluesnap/general/is_sandbox_mode');
-        }
-
-        return $isSnadBox;
-    }
-
-    private function setSandbox($postData)
-    {
-        if (is_null($postData['store']) && $postData['website']) //check for website scope
-        {
-            $scopeId = Mage::getModel('core/website')->load($postData['website'])->getId();
-            $currentScope = 'websites';
-        } elseif ($postData['store']) //check for store scope
-        {
-            $scopeId = Mage::getModel('core/store')->load($postData['store'])->getId();
-            $currentScope = 'stores';
-        } else //for default scope
-        {
-            $scopeId = 0;
-            $currentScope = 'default';
-        }
-
-        if ($currentScop == 'default') Mage::getConfig()->saveConfig('bluesnap/general/is_sandbox_mode', '1');
-        else Mage::getConfig()->saveConfig('bluesnap/general/is_sandbox_mode', '1', $currentScope, $scopeId);
-    }
-
-    //we check if ssl is installed on server and user is working on non secure page
-
-    private function is_exist_ssl($baseurl)
-    {
-		$domain=parse_url($baseurl, PHP_URL_HOST);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://" . $domain);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_exec($ch);
-
-        if (!curl_error($ch)) {
-            $info = curl_getinfo($ch);
-            if ($info['http_code'] == 200) {
-                return true;
-            }
-            return false;
-        } else {
-            return false;
-        }
-    }
+  
     public function sendCron() {
 	$days = Mage::getStoreConfig('bluesnap/logger/collect_data_for');
 
@@ -293,5 +206,24 @@ class Bluesnap_Payment_Model_Observer
 		$logger->delete();
 	}
 	$collection->save();
+    }
+    
+    public function addJsOnestep($observer){
+    	$controller = $observer->getAction();
+    	$controllerName = $controller->getRequest()->getRouteName();
+    	$exist = strpos($controllerName, 'onestepcheckout');
+    	if ($exist !== FALSE) {
+    		 $layout = $controller->getLayout();
+  			//if( $layout->getBlock('head')){
+    			$layout->getBlock('head')->addLinkRel('text/javascript','https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js');
+ 	       		$layout->getBlock('head')->addItem('js','bluesnap/credit-card-detect.js');
+ 				$layout->getBlock('head')->addItem('js','bluesnap/payform.js');
+ 				$layout->getBlock('head')->addItem('js','bluesnap/bsadmin.js');		
+ 				$layout->getBlock('head')->addItem('js','lib/jquery/jquery-ui/jquery-ui.js');
+ 				$layout->getBlock('head')->addItem('js','lib/jquery/jquery-ui/jquery-ui.js');
+ 				$layout->getBlock('head')->addItem('skin_css', 'css/bluesnap/buynow/checkout.css');
+ 				$layout->getBlock('head')->addItem('js_css', 'lib/jquery/jquery-ui/jquery-ui.css');
+ 			//}
+		} 
     }
 }

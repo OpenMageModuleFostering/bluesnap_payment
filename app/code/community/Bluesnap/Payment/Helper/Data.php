@@ -103,7 +103,7 @@ class Bluesnap_Payment_Helper_Data extends Bluesnap_Payment_Helper_Config
                 $message = "ECP details couldn't be verified";
                 break;
             default:
-                $message = 'Something went wrong during placing your order. Please contact support.';
+                $message = 'Unfortunately an error has occurred and your payment cannot be processed at this time, please verify your payment details or try again later. If the problem persists, please contact our support team';
         }
 
         return $message;

@@ -88,30 +88,19 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         if ($paymentaction != 'authorize_capture') {
             //Auth minimal amount
             if ($bsShopperId) {
-
                 //Here we Check if order is comming from admin or frontend
                 $order = $payment->getOrder();
-                if (!empty($order->getRemoteIp())) {
-                    //frontend order
-                    $api = Mage::getModel('bluesnap/api_saved');
-                    $response = $api->createAuthOrder($payment, $bsShopperId);
-
-                } else {
-                    //admin order
-                    $api = Mage::getModel('bluesnap/api_saved');
-                    $response = $api->createAuthOrder($payment, $bsShopperId);
-                }
-
+                $api = Mage::getModel('bluesnap/api_saved');
+                $response = $api->createAuthOrder($payment, $bsShopperId);
             } else {
                 // new customer
                 $response = $this->placeAuthOrder($payment);
-
             }
 
         } else {
             //Here we Check if order is comming from admin or frontend
             $order = $payment->getOrder();
-            if (!empty($order->getRemoteIp())) {
+            if ($order->getRemoteIp()) {
                 //frontend order
                 if ($bsShopperId) {
                     // returning shopper
@@ -171,15 +160,13 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
             $price = 1;
             $currencyApi = Mage::getModel('bluesnap/api_currency');
             $currResponse = $currencyApi->convert('USD', $baseCurrencyCode, $price);
-            // $sum['amount'] = Mage::helper('directory')->currencyConvert($price, 'USD',$baseCurrencyCode);
             $sum['amount'] = $currResponse;
         } else $sum['amount'] = 1;
 
-
         $data = array(
             'web-info' => array(
-                'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
-                'remote-host' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'remote-host' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                 'user-agent' => Mage::helper('core/http')->getHttpUserAgent(),
             ),
             'shopper-details' => array(
@@ -189,13 +176,8 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                             'first-name' => $billing->getFirstname(),
                             'last-name' => $billing->getLastname(),
                             'email' => $order->getCustomerEmail(),
-                            // 'address1' => $billing->getStreet(1),
-                            // 'address2' => $billing->getStreet(2),
-                            // 'city' => $billing->getCity(),
                             'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
                             'country' => strtoupper($billing->getCountry()),
-                            // 'phone' => $billing->getTelephone(),
-                            // 'zip' => $billing->getPostcode(),
                         ),
                         'shopper-currency' => $sum['currency'],
                         'payment-info' => array(
@@ -204,19 +186,15 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                                     'billing-contact-info' => array(
                                         'first-name' => $billing->getFirstname(),
                                         'last-name' => $billing->getLastname(),
-                                        //       'address1' => $billing->getStreet(1),
-                                        //	      'address2' => $billing->getStreet(2),
-                                        //       'city' => $billing->getCity(),
                                         'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
                                         'country' => strtoupper($billing->getCountry()),
-                                        //       'zip' => $billing->getPostcode(),
                                     ),
                                     'credit-card' => array(
-                                        'encrypted-card-number' => $payment->getCcNumber(),
-                                        'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                                        'encrypted-card-number' => Mage::app()->getRequest()->getParam('encryptedCreditCard'),
+                                        // 'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
                                         'expiration-month' => $payment->getCcExpMonth(),
                                         'expiration-year' => $payment->getCcExpYear(),
-                                        'encrypted-security-code' => $payment->getCcCid(),
+                                        'encrypted-security-code' => Mage::app()->getRequest()->getParam('encryptedCvv'),
                                     ),
                                 ),
                             ),
@@ -233,8 +211,8 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                     'ordering-shopper' => array(
                         'seller-shopper-id' => '',
                         'web-info' => array(
-                            'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
-                            'remote-host' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                            'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                            'remote-host' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                             'user-agent' => Mage::helper('core/http')->getHttpUserAgent(),
                         ),
                     ),
@@ -263,11 +241,11 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                 ),
             ),
         );
-
+		// Zend_Debug::dump($data); exit;
         $xml = new SimpleXMLElement('<shopping-context xmlns="' . $this->_getXmlNs() . '"/>');
         $request = Mage::helper('bluesnap')->arrayToXml($data, $xml)->asXML();
 
-        //BSNPMG-86 - remove sensitive data from logs
+        // remove sensitive data from logs
         $logData = $data;
         $logData['shopper-details']['shopper']['shopper-info']['payment-info']['credit-cards-info']['credit-card-info']['credit-card']['encrypted-card-number'] = '****';
         $logData['shopper-details']['shopper']['shopper-info']['payment-info']['credit-cards-info']['credit-card-info']['credit-card']['encrypted-security-code'] = '****';
@@ -279,17 +257,9 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         // send request
         $url = $this->getServiceUrl('shopping-context');
         $response = $this->_request($url, $request, 0, false, true);
-        //$response =  $this->_parseXmlResponse($responseXml);
-        //hide sensitive data
-        //  $this->_requestXml=$logRequestXml;
-        //$requestUrl = $logResponse->order->{'post-sale-info'}->invoices->invoice->url;
+       
         $responseArr = $this->parseHeaders($response);
-        // @todo : this will give an error
-//        $logResponse->shopper->{'shopper-info'}->password = '****';
-
-        //  $this->_responseXml=$logResponse->asXml();
-
-
+       
         try {
             //   $response = $this->parseCreateResponse($response, null, $order);
         } catch (Exception $e) {
@@ -353,17 +323,33 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         }
 
         // if card was not used before — save card for shopper
-        //if (!isset($cards[$payment->getCcLast4()])) {
-        //BSNPMG-108
+      		$validCC = false;
         if ($payment->getCcNumber()) {
-            $this->addCardToShopper($payment, $total, $bsShopperId);
+            $response = $this->addCardToShopper($payment, $total, $bsShopperId);
 
+			$CCs = $response->descend("shopper-info/payment-info/credit-cards-info/credit-card-info");
+
+			foreach($CCs AS $cc) {		
+				if(
+					(int)$cc->descend("credit-card/expiration-month") == $payment->getCcExpMonth() &&
+					(int)$cc->descend("credit-card/expiration-year") == $payment->getCcExpYear() &&
+					(int)$cc->descend("credit-card/card-last-four-digits") == $payment->getCcLast4()										
+				) {
+					$validCC = $cc->descend("credit-card");
+				}		
+			}			
         } else {   //BSNPMG-34 no need to update shopper call when new card added
 
             $this->updateShopper($payment, $total, $bsShopperId);
-
         }
-
+		
+		if($validCC) {
+			$type = (string) $validCC->descend("card-type");
+			
+			$payment->setCcType($type)->save();
+		} else {
+			$type = (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : '');
+		}
 
         $data = array(
             'ordering-shopper' => array(
@@ -372,11 +358,11 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                 'shopper-id' => $bsShopperId,
                 'credit-card' => array(
                     'card-last-four-digits' => $payment->getCcLast4(),
-                    'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                    'card-type' => $type,
                 ),
                 'web-info' => array(
-                    'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
-                    'remote-host' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                    'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                    'remote-host' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                     'user-agent' => Mage::helper('core/http')->getHttpUserAgent(),
                 ),
                 'fraud-info' => array(
@@ -421,16 +407,12 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         // send request
         $url = $this->getServiceUrl('orders');
         $responseXml = $this->_request($url, $request);
-
-
         $response = $this->_parseXmlResponse($responseXml);
 
         try {
 
-            $response = $this->parseCreateResponse($response, $bsShopperId, $order);
+            $response = $this->parseCreateResponse($response, $bsShopperId, $order,$url);
         } catch (Exception $e) {
-            //Mage::logException($e);
-            //throw $e;
             throw new Bluesnap_Payment_Model_Api_Exception(Mage::helper('core')->__('Something went wrong during placing your order. Please contact support.'));
         }
 
@@ -460,7 +442,7 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
 
         $data = array(
             'web-info' => array(
-                'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
             ),
             //BSNPMG-163 - fraud support
             //http://docs.bluesnap.com/api/services/shoppers/create-shopper
@@ -478,21 +460,14 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                             'billing-contact-info' => array(
                                 'first-name' => $billing->getFirstname(),
                                 'last-name' => $billing->getLastname(),
-                                //BSNPMG-106
-                                // 'company-name' => $billing->getCompany(),
-                                // 'address1' => $billing->getStreet(1),
-                                // 'address2' => $billing->getStreet(2),
-                                //  'city' => $billing->getCity(),
                                 'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
-                                //  'zip' => $billing->getPostcode(),
                                 'country' => strtoupper($billing->getCountry()),
                             ),
                             'credit-card' => array(
-                                'encrypted-card-number' => $payment->getCcNumber(),
-                                'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                                'encrypted-card-number' => Mage::app()->getRequest()->getParam('encryptedCreditCard'),
                                 'expiration-month' => $payment->getCcExpMonth(),
                                 'expiration-year' => $payment->getCcExpYear(),
-                                'encrypted-security-code' => $payment->getCcCid(),
+                                'encrypted-security-code' => Mage::app()->getRequest()->getParam('encryptedCvv'),
                                 'card-last-four-digits' => $payment->getCcLast4(),
                             ),
                         ),
@@ -505,12 +480,13 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
 
         $url = $this->getServiceUrl('shoppers/' . $bsShopperId);
         $responseXml = $this->_request($url, $requestXml, self::HTTP_METHOD_PUT);
+        
         //http://docs.bluesnap.com/api/services/shoppers/update-shopper
         //If successful, the response HTTP status code is 204 No Content.
         //Otherwise, Errors will be returned in a messages resource.
         //@todo: verify response code (204 for update shopper)
 
-        //BSNPMG-86 remove sensitive data from logs
+        //remove sensitive data from logs
         $logData = $data;
         $logData['shopper-info']['payment-info']['credit-cards-info']['credit-card-info']['credit-card']['encrypted-card-number'] = '****';
         $logData['shopper-info']['payment-info']['credit-cards-info']['credit-card-info']['credit-card']['encrypted-security-code'] = '****';
@@ -527,20 +503,27 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
             Mage::logException($e);
 
             Mage::throwException(mage::helper('bluesnap')->__('Can not authorize your card'));
-            //throw $e;
+          
+        }
+        else {
+        	//log success add card to shopper API call
+    		$this->getLogger()->logSuccess($logRequestXml, $this->_responseXml, 0, "addCardToShopper success", "addCardToShopper", $order->getIncrementId(), $url);
+
         }
 
         //need to unset the value in session for new card to be avaialable
         $this->getSession()->unsetData('bs_shopper');
-
+		
+		
+		
+		
         // and save it again in the session
-        $this->retrieveShopper($bsShopperId);
+        $response = $this->retrieveShopper($bsShopperId);
 
         // unregister cards from registery
         Mage::unregister('bs_shopper_cards');
-
-
-        $this->getLogger()->logSuccess($logRequestXml, $this->_responseXml, 0, "addCardToShopper success", "addCardToShopper", $order->getIncrementId(), $url);
+		
+        return $response;
 
     }
 
@@ -551,12 +534,11 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
      * @return Varien_Simplexml_Element
      * @throws Mage_Core_Exception
      */
-    public function retrieveShopper($bsShopperId)
+    public function retrieveShopper($bsShopperId , $action=NULL, $forceCall = false)
     {
-        //BSNPMG-35 - save shopper in session
-        //if (!Mage::registry('bs_shopper')) {
+       
 
-        if (!$this->getSession()->getData('bs_shopper')) {
+        if (!$this->getSession()->getData('bs_shopper')  || $action=="invoice" || $forceCall) {
 
             // send request
             $url = $this->getServiceUrl('shoppers/' . $bsShopperId);
@@ -587,7 +569,6 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         $responseXml = $this->getSession()->getData('bs_shopper');
         $response = $this->_parseXmlResponse($responseXml);
 
-        //return Mage::registry('bs_shopper');
         return $response;
     }
 
@@ -616,9 +597,9 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
 
         $data = array(
             'web-info' => array(
-                'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
             ),
-            //BSNPMG-163 - fraud support
+            
             //http://docs.bluesnap.com/api/services/shoppers/create-shopper
             'fraud-info' => array(
                 'fraud-session-id' => Mage::getSingleton('checkout/session')->getSessionId(),
@@ -627,20 +608,12 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                 'store-id' => Mage::helper('bluesnap')->getBluesnapStoreId(),
                 'shopper-currency' => $sum['currency'],
                 'charged-currency' => $sum['currency'],
-                ////BSNPMG-106
                 'shopper-contact-info' => array(
                     'first-name' => $billing->getFirstname(),
                     'last-name' => $billing->getLastname(),
                     'email' => $order->getCustomerEmail(),
-                    //       'company-name' => $billing->getCompany(),
-                    //       'address1' => $billing->getStreet(1),
-                    //       'address2' => $billing->getStreet(2),
-                    //       'city' => $billing->getCity(),
                     'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
-                    //       'zip' => $billing->getPostcode(),
                     'country' => strtoupper($billing->getCountry()),
-                    //       'phone' => $billing->getTelephone(),
-                    //       'fax' => $billing->getFax(),
                 ),
                 'payment-info' => array(
                     'credit-cards-info' => array(
@@ -648,20 +621,14 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                             'billing-contact-info' => array(
                                 'first-name' => $billing->getFirstname(),
                                 'last-name' => $billing->getLastname(),
-                                //                'company-name' => $billing->getCompany(),
-                                //                'address1' => $billing->getStreet(1),
-                                //                'address2' => $billing->getStreet(2),
-                                //                'city' => $billing->getCity(),
                                 'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
-                                //                'zip' => $billing->getPostcode(),
                                 'country' => strtoupper($billing->getCountry()),
                             ),
                             'credit-card' => array(
-                                'encrypted-card-number' => $payment->getCcNumber(),
-                                'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                                'encrypted-card-number' => Mage::app()->getRequest()->getParam('encryptedCreditCard'),
                                 'expiration-month' => $payment->getCcExpMonth(),
                                 'expiration-year' => $payment->getCcExpYear(),
-                                'encrypted-security-code' => $payment->getCcCid(),
+                                'encrypted-security-code' => Mage::app()->getRequest()->getParam('encryptedCvv'),
                                 'card-last-four-digits' => $payment->getCcLast4(),
                             ),
                         ),
@@ -701,7 +668,7 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
      * @return array
      * @throws Mage_Core_Exception
      */
-    protected function parseCreateResponse($responseXml, $bsShopperId = null, $order = null)
+    protected function parseCreateResponse($responseXml, $bsShopperId = null, $order = null, $url= " ")
     {
         $result = array('shopperId' => null, 'invoiceId' => null);
         //  $error = Mage::helper('bluesnap')->__('Unfortunately the transaction cannot be processed at this time due to an unspecified error, please try a different card or try again at a later time');
@@ -709,9 +676,10 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         if ($responseXml->message) {
             // $error = Mage::helper('bluesnap')->__('Unfortunately the transaction cannot be processed at this time due to an unspecified error, please try a different card or try again at a later time');
             $error = (string)$responseXml->message->description;
+
             $e = new Bluesnap_Payment_Model_Api_Exception($error, (int)$responseXml->message->code);
             Mage::logException($e);
-            $this->getLogger()->logError($this->_requestXml, $this->_responseXml, (int)$responseXml->message->code, $error, "createOrder", $order->getIncrementId());
+            $this->getLogger()->logError($this->_requestXml, $this->_responseXml, (int)$responseXml->message->code, $error, "createOrder", $order->getIncrementId(),$url);
 
             throw $e;
 
@@ -752,7 +720,7 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
     {
         $order = $payment->getOrder();
         $billing = $order->getBillingAddress();
-
+		
         if (!Mage::helper('bluesnap')->isStateSupported($billing->getRegionCode())) {
             throw new Bluesnap_Payment_Model_Api_Exception(Mage::helper('core')->__('State is not supported'));
         }
@@ -767,15 +735,15 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         }
 
         //http://docs.bluesnap.com/api/services/orders/batch-create-shopper-and-order
-
+		
         $data = array(
             'shopper' => array(
                 'web-info' => array(
-                    'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                    'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                 ),
                 //BSNPMG-163 - fraud support
                 //http://docs.bluesnap.com/api/services/shoppers/create-shopper
-                //BSNPMG-106
+              
                 'shopper-info' => array(
                     'store-id' => Mage::helper('bluesnap')->getBluesnapStoreId(),
                     'shopper-currency' => $sum['currency'],
@@ -786,15 +754,9 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                         'first-name' => $billing->getFirstname(),
                         'last-name' => $billing->getLastname(),
                         'email' => $order->getCustomerEmail(),
-                        //       'company-name' => $billing->getCompany(),
-                        //       'address1' => $billing->getStreet(1),
-                        //       'address2' => $billing->getStreet(2),
-                        //        'city' => $billing->getCity(),
+                        
                         'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
-                        //         'zip' => $billing->getPostcode(),
                         'country' => strtoupper($billing->getCountry()),
-                        //         'phone' => $billing->getTelephone(),
-                        //         'fax' => $billing->getFax(),
                     ),
                     'payment-info' => array(
                         'credit-cards-info' => array(
@@ -802,20 +764,14 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                                 'billing-contact-info' => array(
                                     'first-name' => $billing->getFirstname(),
                                     'last-name' => $billing->getLastname(),
-                                    //                 'company-name' => $billing->getCompany(),
-                                    //                 'address1' => $billing->getStreet(1),
-                                    //                 'address2' => $billing->getStreet(2),
-                                    //                 'city' => $billing->getCity(),
                                     'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
-                                    //                 'zip' => $billing->getPostcode(),
                                     'country' => strtoupper($billing->getCountry()),
                                 ),
                                 'credit-card' => array(
-                                    'encrypted-card-number' => $payment->getCcNumber(),
-                                    'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                                    'encrypted-card-number' => Mage::app()->getRequest()->getParam('encryptedCreditCard'),
                                     'expiration-month' => $payment->getCcExpMonth(),
                                     'expiration-year' => $payment->getCcExpYear(),
-                                    'encrypted-security-code' => $payment->getCcCid(),
+                                    'encrypted-security-code' => Mage::app()->getRequest()->getParam('encryptedCvv'),
                                 ),
                             ),
                         )
@@ -826,8 +782,8 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                 'ordering-shopper' => array(
                     'seller-shopper-id' => '',
                     'web-info' => array(
-                        'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
-                        'remote-host' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                        'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                        'remote-host' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                         'user-agent' => Mage::helper('core/http')->getHttpUserAgent(),
                     ),
                     'fraud-info' => array(
@@ -847,7 +803,6 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                             'soft-descriptor' => $order->getIncrementId(),
                             'description' => $order->getIncrementId(),
                             'title' => $order->getIncrementId(),
-                            //BSNPMG-78
                             'sku-name' => 'Order #' . $order->getIncrementId(),
                         ),
                         'quantity' => '1',
@@ -864,9 +819,10 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                 ),
             ),
         );
+
         $xml = new SimpleXMLElement('<batch-order xmlns="' . $this->_getXmlNs() . '"/>');
         $request = Mage::helper('bluesnap')->arrayToXml($data, $xml)->asXML();
-
+		
         //BSNPMG-86 - remove sensitive data from logs
         $logData = $data;
         $logData['shopper']['shopper-info']['payment-info']['credit-cards-info']['credit-card-info']['credit-card']['encrypted-card-number'] = '****';
@@ -880,15 +836,14 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
         $url = $this->getServiceUrl('batch/order-placement');
 
         $responseXml = $this->_request($url, $request);
-
+		
         $response = $this->_parseXmlResponse($responseXml);
-
+		$ccType = (string) $response->descend("shopper/shopper-info/payment-info/credit-cards-info/credit-card-info/credit-card/card-type");
+			$payment->setCcType($ccType)->save();
         //hide sensitive data
         $this->_requestXml = $logRequestXml;
         $logResponse = $this->_parseXmlResponse($responseXml);
-
-        //$requestUrl = $logResponse->order->{'post-sale-info'}->invoices->invoice->url;
-
+        
         $logResponse->shopper->{'shopper-info'}->password = '****';
 
         $this->_responseXml = $logResponse->asXml();
@@ -981,17 +936,25 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
     {
 
         if (!Mage::registry('bs_shopper_cards')) {
-            $xml = $this->retrieveShopper($bsShopperId);
-            $cards_info = $xml->xpath('//ns1:credit-card');
+           try
+			{
+			      $xml = $this->retrieveShopper($bsShopperId);
+            	  $cards_info = $xml->xpath('//ns1:credit-card');
 
-            $cards = array();
-            foreach ($cards_info as $info) {
-                $last = (string)$info->{'card-last-four-digits'};
-                $type = (string)$info->{'card-type'};
-                $cards[$last] = $type;
-            }
+            	  $cards = array();
+            	  foreach ($cards_info as $info) {
+               		 $last = (string)$info->{'card-last-four-digits'};
+               		 $type = (string)$info->{'card-type'};
+              		 $cards[$last] = $type;
+           		  }
 
-            Mage::register('bs_shopper_cards', $cards);
+            	  Mage::register('bs_shopper_cards', $cards);
+			}
+		   catch(Exception $e)
+			{
+    		   // throw new Exception("cound not find cards");
+			}
+         
         }
 
 
@@ -1047,7 +1010,7 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
 
         $data = array(
             'web-info' => array(
-                'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
             ),
             'fraud-info' => array(
                 'fraud-session-id' => Mage::getSingleton('checkout/session')->getSessionId(),
@@ -1059,13 +1022,8 @@ class Bluesnap_Payment_Model_Api_Cse extends Bluesnap_Payment_Model_Api_Abstract
                     'first-name' => $billing->getFirstname(),
                     'last-name' => $billing->getLastname(),
                     'email' => $order->getCustomerEmail(),
-                    // 'company-name' => $billing->getCompany(),
-                    // 'address1' => $billing->getStreet(1),
-                    // 'address2' => $billing->getStreet(2),
-                    // 'city' => $billing->getCity(),
                     'state' => strtoupper($billing->getCountry()) == 'US' || strtoupper($billing->getCountry()) == 'CA' ? $billing->getRegionCode() : '',
                     'country' => strtoupper($billing->getCountry()),
-                    //  'zip' => $billing->getPostcode(),
                 ),
             ),
         );

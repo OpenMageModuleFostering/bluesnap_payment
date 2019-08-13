@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Bluesnap_Payment>
-            <version>2.0.2.4</version>
+            <version>2.0.3.3</version>
         </Bluesnap_Payment>
     </modules>
 
@@ -255,15 +255,6 @@
             </modules>
         </translate>
         <events>
-            <admin_system_config_changed_section_bluesnap>
-                <observers>
-                    <bluesnap_system_config_changed_section_bluesnap>
-                        <type>singleton</type>
-                        <class>Bluesnap_Payment_Model_Observer</class>
-                        <method>checkSecure</method>
-                    </bluesnap_system_config_changed_section_bluesnap>
-                </observers>
-            </admin_system_config_changed_section_bluesnap>
             <sales_order_grid_collection_load_before_>
                 <observers>
                     <bluesnap_sales_order_grid_collection_load_before>
@@ -312,6 +303,8 @@
             <general>
                 <protection_key backend_model="adminhtml/system_config_backend_encrypted"/>
                 <api_password backend_model="adminhtml/system_config_backend_encrypted"/>
+                 <bluesnap_general_is_sandbox_mode>1</bluesnap_general_is_sandbox_mode>
+                <include_jquery>0</include_jquery>
             </general>
             <logger>
                 <mail_subject>Api Alert</mail_subject>

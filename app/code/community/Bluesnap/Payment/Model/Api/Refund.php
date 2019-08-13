@@ -43,6 +43,7 @@ class Bluesnap_Payment_Model_Api_Refund extends Bluesnap_Payment_Model_Api_Abstr
 
         $requestUrl = $url . '?' . $query;
         $response = $this->_request($requestUrl, null, self::HTTP_METHOD_PUT);
+
         if ($this->_curlInfo['http_code'] != 204 || !empty($response)) {
             // error
             try {
@@ -55,14 +56,14 @@ class Bluesnap_Payment_Model_Api_Refund extends Bluesnap_Payment_Model_Api_Abstr
                 $xml = $response;
                 $message = $response;
             }
-
             $e = Mage::exception('Bluesnap_Payment', $message,
                 (int)$xml->message->code);
 
             Mage::logException($e);
             $this->getLogger()->logError($requestUrl, $this->_responseXml, 0, $message, "refund", $incrementId, $url);
-
-            throw $e;
+			
+			Mage::throwException($message);
+            //throw $e;
 
         } else {
             $this->getLogger()->logSuccess($requestUrl, '204/successful', 0, "refunded", "refund", $incrementId, $url);

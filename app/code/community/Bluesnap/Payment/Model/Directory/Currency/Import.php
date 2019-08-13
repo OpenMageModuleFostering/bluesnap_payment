@@ -46,7 +46,7 @@ class Bluesnap_Payment_Model_Directory_Currency_Import extends Mage_Directory_Mo
             $this->_messages[] = Mage::helper('directory')->__('Cannot retrieve BlueSnap rate from %s.', $this->_url);
             return null;
         }
-        $this->_messages['info'][] = "Successfully retrieved $currencyFrom => $currencyTo = " . $value / self::AMOUNT;
+        // $this->_messages['info'][] = "Successfully retrieved $currencyFrom => $currencyTo = " . $value / self::AMOUNT;
 
         $this->getLogger()->logSuccess('convert rates import', "Successfully retrieved $currencyFrom => $currencyTo = " . $value / self::AMOUNT, 0, "Import Rates success", "convert rates", '', '');
 

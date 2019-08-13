@@ -2,41 +2,155 @@
 /**
  * @see Bluesnap_Payment_Block_Payment_Form_Cse
  * @var $this Bluesnap_Payment_Block_Payment_Form_Cse
- * //http://getspritexy.com/
  */
 ?>
-
 <?php $_code = $this->getMethodCode() ?>
-<?php
-$cards = $this->getCards() ?>
+<?php $cards = $this->getCards() ?>
 
-<script type="text/javascript">// <![CDATA[
-    jQuery( document ).ready(function($) {
-        $('#cse_cc_number').creditCardType();
-        $( ".tooltip" ).tooltip(
-            {
-                position: { my: 'center bottom', at: 'center top-10' },
-                show: { effect: "fade", duration: 800 }
-            }
-        );
+<script type="text/javascript">
+	CreditCartScriptLoaded = false;
+	
+	// load scripts if they are not available
+	
+	if(typeof BlueSnap == "undefined") {
+		var bluesnap = document.createElement('script');
+		bluesnap.type = 'text/javascript';
+		bluesnap.src = 'https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js';    
+		document.head.appendChild(bluesnap);
+
+		var creditcard = document.createElement('script');
+		creditcard.type = 'text/javascript';
+		creditcard.src = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>js/bluesnap/credit-card-detect.js';    
+		document.head.appendChild(creditcard);
+
+		var payformSourceFile = document.createElement('script');
+		payformSourceFile.type = 'text/javascript';
+		payformSourceFile.src = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>js/bluesnap/payform.js';
+
+		document.head.appendChild(payformSourceFile);
+	
+		var jqueryui = document.createElement('script');
+		jqueryui.type = 'text/javascript';
+		jqueryui.src = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>js/lib/jquery/jquery-ui/jquery-ui.js';  
+
+		document.head.appendChild(jqueryui); 
+	  
+		var checkout = document.createElement('link');
+		checkout.rel = 'stylesheet';
+ 	   	checkout.type = 'text/css';
+		checkout.media = 'all';
+		checkout.href = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>skin/frontend/base/default/css/bluesnap/buynow/checkout.css';    
+
+		document.head.appendChild(checkout);
+	
+		var jquerycss = document.createElement('link');
+		jquerycss.rel = 'stylesheet';
+		jquerycss.type = 'text/css';
+		jquerycss.media = 'all';
+		jquerycss.href = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>js/lib/jquery/jquery-ui/jquery-ui.css';    
+	
+		document.getElementsByTagName('head')[0].appendChild(jquerycss);
+	}
+	
+	// Add new cc types to magento validation
+	
+	Validation.creditCartTypes.set('DC', [new RegExp('^3(?:0[0-5]|[68][0-9])[0-9]{11}$'), new RegExp('^[0-9]{3}$'), true]);
+	Validation.creditCartTypes.set('CB', [new RegExp('^4[0-9]{12}([0-9]{3})?$'), new RegExp('^[0-9]{3}$'), true]);
+
+	// load cc validation jquery plugin
+
+	var loading = jQuery.getScript('<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>js/bluesnap/credit-card-detect.js');
+
+		jQuery.when( loading ).then(function() {
+			jQuery.creditCardType();
+			jQuery("#<?php echo $_code ?>_cc_number").blur(function(){
+				removeSpaceCc(this);
+				bsencrypt(this);
+			});
+			
+		});
+    jQuery(document).ready(function($) {	
+		var loading = jQuery.getScript('<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);?>js/bluesnap/credit-card-detect.js');
+
+		jQuery.when( loading ).then(function() {
+			jQuery.creditCardType();
+			jQuery("#<?php echo $_code ?>_cc_number").blur(function(){
+				removeSpaceCc(this);
+				bsencrypt(this);
+			});
+			
+		});
+		if(typeof jQuery.fn.tooltip != 'undefined') {
+			 jQuery( ".tooltip" ).tooltip(
+				{
+					position: { my: 'center bottom', at: 'center top-10' },
+                	show: { effect: "fade", duration: 800 }
+				}
+			 );
+       	 }
+       	 <?php if (count($cards)):?>$('card-form').hide();<?php endif?>	
+				 
+		 jQuery('.bluesnap-payment-container').bind("DOMSubtreeModified",function(){
+			 var findEl = jQuery(".bluesnap-payment-container .opc-cc-list");
+			 if(findEl.length > 0) {
+				 findEl.parent().parent().hide();
+			 }
+
+			 if(jQuery(".ssl-placeholder").length > 1) {
+				 for(i=1; i <= jQuery(".ssl-placeholder").length; i++) {
+					 var item = jQuery(".ssl-placeholder")[i];
+					 jQuery(item).hide();
+				 }
+			 }
+		 });
+	    
     });
-    //  jQuery.$.widget.tooltip.prototype.options.duration=800;
-    //  jQuery.$.widget.tooltip.prototype.options.effect='fadeIn';
-
+		
 	function removeSpaceCc(el){
 		var val = el.value.replace(/\s/g, "");
 		document.getElementById("cse_cc_number").value=val;
+		if(document.getElementById("cse_cc_type").value==''){
+			var creditCardType = payform.parseCardType(val);
+			 switch(creditCardType) {
+                case 'visa':
+                    jQuery('.pli-cc-VISA').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('VI');
+                    break;
+                case 'mastercard':
+                    jQuery('.pli-cc-MASTERCARD').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('MC');
+                    break;
+                case 'amex':
+                    jQuery('.pli-cc-AMEX').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('AE');
+                    break;
+                case 'discover':
+                    jQuery('.pli-cc-DISCOVER').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('DI');
+                    break;
+                case 'jcb':
+                    jQuery('.pli-cc-JCB').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('JCB');
+                    break;
+                case 'dinersclub':
+                    jQuery('.pli-cc-DINERS').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('DC');
+                    break;    
+                case 'carteblue':
+                    jQuery('.pli-cc-CARTE_BLEUE').addClass('pli-active');
+                    jQuery("select[id=cse_cc_type]").val('CB');
+                    break;
+            };
+
+            if(jQuery(".validation-advice")) {
+                jQuery(".validation-advice").hide();
+            }
+                    
+		}
 	}
+	</script>
 
-
-
-
-
-    // ]]></script>
-
-
-
-<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+<ul class="form-list bluesnap-payment-container" id="payment_form_<?php echo $_code ?>" style="display:none;">
 
     <?php if (count($cards)): ?>
         <li>
@@ -54,7 +168,7 @@ $cards = $this->getCards() ?>
                     </li>
                 <?php endforeach ?>
                 <li><a href="#"
-                       onclick="$('card-form').show();$('no_saved_card').checked=true;return false;"><?php echo $this->__('Provide another card') ?></a>
+                       onclick="$('card-form').show();$('card-form').removeClassName('no-display');$('no_saved_card').checked=true;jQuery('#cse_cc_number').creditCardType();return false;"><?php echo $this->__('Provide another card') ?></a>
                     <input type="radio" name="bluesnap_card_saved" id="no_saved_card" value="no"
                            class="validate-one-required-by-name bluesnap_card_saved" style="display:none"/>
                 </li>
@@ -62,18 +176,16 @@ $cards = $this->getCards() ?>
         </li>
     <?php endif ?>
     <li>
-        <ul id="card-form" <?php if (count($cards)): ?>style="display:none;"<?php endif?>>
+        <ul id="card-form"<?php if (count($cards)):?> class="no-display"<?php endif?> <?php if (count($cards)):?>style="display:none;"<?php endif?>>
 
             <?php
             $showCcTypesDropdown = $this->getMethod()->getConfigData('show_cctypes_dropdown'); ?>
 
             <li style="display:<?php echo $showCcTypesDropdown ? 'block':'none'?>">
-                <label for="<?php echo $_code ?>_cc_type"
-                       class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label>
+                <label for="<?php echo $_code ?>_cc_type"><em>*</em><?php echo $this->__('Credit Card Type') ?></label>
 
                 <div class="input-box">
-                    <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]"
-                            class="required-entry validate-cc-type-select">
+                    <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]">
                         <option value=""><?php echo $this->__('--Please Select--') ?></option>
                         <?php $_ccType = $this->getInfoData('cc_type') ?>
                         <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
@@ -114,20 +226,13 @@ $cards = $this->getCards() ?>
 
                 <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]"
                        title="<?php echo $this->__('Credit Card Number') ?>"
-                       class="input-text required-entry validate-number validate-cc-number validate-cc-type" value=""
-                       data-bluesnap="encryptedCreditCard"  onchange="jQuery(this).val(jQuery(this).val().replace(/\s+/g, ''));"
+                       class="input-text required-entry validate-cc-number" value=""
+                       data-bluesnap="encryptedCreditCard"  onchange="removeSpaceCc(this);if (typeof bsencrypt == 'function') bsencrypt(this);"
 
                     />
                 <span id="cse_cc_number_valid" class="pli-cc pli-cc-valid" style="display: none;"  ></span>
                 <span id="cse_cc_number_not_valid" class="pli-cc pli-cc-not-valid tooltip" style="display: none;"
-                      title="<?php echo $this->__("Card Number should be between 12 and 21 characters long")?>"
-                    ></span>
-
-
-
-
-
-
+                      title="<?php echo $this->__("Card Number should be between 12 and 21 characters long")?>"></span>
 
 
                 <input type="hidden" name="<?php echo $_code ?>_cc_last" id="<?php echo $_code ?>_cc_last" value=""/>
@@ -147,8 +252,6 @@ $cards = $this->getCards() ?>
                             <?php endforeach ?>
                         </select>
 
-
-                        ></span>
                     </div>
                     <div class="v-fix">
                         <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
@@ -175,15 +278,13 @@ $cards = $this->getCards() ?>
                     <div class="input-box">
                         <div class="v-fix">
                             <input type="text" title="<?php echo $this->__('Card Verification Number') ?>"
-                                   class="input-text cvv required-entry validate-cc-cvn"
+                                   class="input-text cvv validate-cc-cvn required-entry"
                                    id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" data-bluesnap="encryptedCvv"
-                                   value=""/>
+                                   value="" onchange="if (typeof bsencrypt == 'function') bsencrypt(this);"/>
 
                             <span id="cse_cc_cid_valid" class="pli-cc pli-cc-valid" style="display: none;" ></span>
                             <span id="cse_cc_cid_not_valid" class="pli-cc pli-cc-not-valid tooltip" style="display: none;"
-                                  title="<?php echo $this->__("Security Code should be between 3 and 4 characters long")?>"
-
-                                ></span>
+                                  title="<?php echo $this->__("Security Code should be between 3 and 4 characters long")?>"></span>
 
                         </div>
                         <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
@@ -191,65 +292,77 @@ $cards = $this->getCards() ?>
                 </li>
             <?php endif; ?>
         </ul>
-        <iframe width='1' height='1' frameborder='0' scrolling='no' src='https://www.bluesnap.com/servlet/logo.gif?&s=<?php echo Mage::getSingleton('checkout/session')->getSessionId()?>'>
-    <img width='1' height='1' src='https://www.bluesnap.com/logo.gif?s=<?php echo Mage::getSingleton('checkout/session')->getSessionId()?>'>
+        <?php $storeId = Mage::app()->getStore()->getStoreId();?>
+        <iframe width='1' height='1' frameborder='0' scrolling='no' src='https://www.bluesnap.com/servlet/logo.htm?d=<?php echo $configValue = Mage::getStoreConfig('bluesnap/general/merchant_id', $storeId);?>&s=<?php echo Mage::getSingleton('checkout/session')->getSessionId()?>'>
+    <img width='1' height='1' src='https://www.bluesnap.com/logo.gif?d=<?php echo $configValue = Mage::getStoreConfig('bluesnap/general/merchant_id', $storeId);?>&s=<?php echo Mage::getSingleton('checkout/session')->getSessionId()?>'>
 </iframe>
     </li>
 </ul>
-<script type="text/javascript">
-    //<![CDATA[	
-    Payment.addMethods({
-        save: function () {
-            if (checkout.loadWaiting != false) return;
-
-            if (payment.currentMethod == 'cse') {
-                var saved_card = $$('input:checked[type=radio][name=bluesnap_card_saved]');
-                if (saved_card.length) {
-                    var card_saved_value = saved_card[0].value;
-                    if (card_saved_value == 'no' && $('<?php echo $_code ?>_cc_number').value.length < 12) {
-                        // alert('<?php echo $this->__('Card was not selected')?>');
-                        // checkout.loadWaiting = false;
-                        //return;
-                    }
-                }
-            }
-
-            jQuery("#cse_cc_type_valid").hide();
-            jQuery("#cse_cc_type_not_valid").hide();
-
-            jQuery("#cse_cc_number_valid").hide();
-            jQuery("#cse_cc_number_not_valid").hide();
-
-            jQuery("#cse_cc_expiration_valid").hide();
-            jQuery("#cse_cc_expiration_not_valid").hide();
-
-            jQuery("#cse_cc_cid_valid").hide();
-            jQuery("#cse_cc_cid_not_valid").hide();
-
-            var validator = new Validation(this.form);
-            //BSNPMG-108 dc validation fix https://github.com/Adyen/magento/commit/55095cbd6078fa9420490600ed1c9a3d3d1c173b
-            Validation.creditCartTypes.set('DC', [new RegExp('^3(?:0[0-5]|[68][0-9])[0-9]{11}$'), new RegExp('^[0-9]{3}$'), true]);
-            Validation.creditCartTypes.set('CB', [new RegExp('^4[0-9]{12}([0-9]{3})?$'), new RegExp('^[0-9]{3}$'), true]);
-
-            if (this.validate() && validator.validate()) {
-                checkout.setLoadWaiting('payment');
-                var bsnp = new BlueSnap('<?php echo $this->getpublicKey()?>');
-                bsnp.encrypt('co-payment-form');
-                $('<?php echo $_code?>_cc_last').value = $('<?php echo $_code ?>_cc_number').value.substr(-4);
-                var request = new Ajax.Request(
-                    this.saveUrl,
-                    {
-                        method: 'post',
-                        onComplete: this.onComplete,
-                        onSuccess: this.onSave,
-                        onFailure: checkout.ajaxFailure.bind(checkout),
-                        parameters: Form.serialize(this.form)
-                    }
-                );
-            }
-        }
-    });
-    //]]>
-</script>
 <style type="text/css">#payment-tool-tip{background:#FFFFFF;padding:4px;position: absolute;border: 1px solid #aaa;border-radius: 5px;}</style>
+	<script type="text/javascript">
+	if (typeof Payment !== 'undefined') {
+    // the Payment is defined
 
+	Payment.addMethods({
+	    save: function () {
+	        if (checkout.loadWaiting != false) return;
+
+	        if (payment.currentMethod == 'cse') {
+	            var saved_card = $$('input:checked[type=radio][name=bluesnap_card_saved]');
+	            if (saved_card.length) {
+	                var card_saved_value = saved_card[0].value;
+	                if (card_saved_value == 'no' && $('<?php echo $_code ?>_cc_number').value.length < 12) {
+	                    // alert('<?php echo $this->__('Card was not selected')?>');
+	                    // checkout.loadWaiting = false;
+	                    //return;
+	                }
+	            }
+	        }
+
+	        jQuery("#cse_cc_type_valid").hide();
+	        jQuery("#cse_cc_type_not_valid").hide();
+
+	        jQuery("#cse_cc_number_valid").hide();
+	        jQuery("#cse_cc_number_not_valid").hide();
+
+	        jQuery("#cse_cc_expiration_valid").hide();
+	        jQuery("#cse_cc_expiration_not_valid").hide();
+
+	        jQuery("#cse_cc_cid_valid").hide();
+	        jQuery("#cse_cc_cid_not_valid").hide();
+
+	        var validator = new Validation(this.form);
+	        //BSNPMG-108 dc validation fix https://github.com/Adyen/magento/commit/55095cbd6078fa9420490600ed1c9a3d3d1c173b
+	        if (this.validate() && validator.validate()) {
+	            checkout.setLoadWaiting('payment');
+	            var bsnp = new BlueSnap('<?php echo $this->getpublicKey()?>');
+	            bsnp.encrypt('co-payment-form');
+	            $('<?php echo $_code?>_cc_last').value = $('<?php echo $_code ?>_cc_number').value.substr(-4);
+	            var request = new Ajax.Request(
+	                this.saveUrl,
+	                {
+	                    method: 'post',
+	                    onComplete: this.onComplete,
+	                    onSuccess: this.onSave,
+	                    onFailure: checkout.ajaxFailure.bind(checkout),
+	                    parameters: Form.serialize(this.form)
+	                }
+	            );
+	        }
+	    }
+	});
+	}
+	
+ 	function bsencrypt(el){
+ 		// var bskey =  $('bspubkey').value;
+ 	     var bsnp = new BlueSnap('<?php echo $this->getpublicKey()?>');
+
+		         <?php if(Mage::registry('bluesnap_disable_encryption')) : ?>
+		 // 	        bsnp.encrypt(el.up('form').id);
+		         <?php else : ?>
+		  	        bsnp.encrypt(el.up('form').id);
+		         <?php endif; ?>
+ 	     $('<?php echo $_code?>_cc_last').value = $('<?php echo $_code ?>_cc_number').value.substr(-4);
+ 	};
+	
+	</script>

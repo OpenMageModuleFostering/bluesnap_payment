@@ -16,7 +16,7 @@ class Bluesnap_Payment_Model_Api_Logger
         $this->_loggers['mail'] = Mage::getsingleton('Bluesnap_Payment_Model_Logger_Mail');
     }
 
-    function logSuccess($request, $response, $responseCode, $message, $method = null, $incrementId = null, $url = null)
+    function logSuccess($request, $response, $responseCode, $message, $method = null, $incrementId = null, $url = " ")
     {
         $event = new Varien_Object();
         $event->setPriority(Zend_Log::INFO);
@@ -54,7 +54,7 @@ class Bluesnap_Payment_Model_Api_Logger
         }
     }
 
-    function logError($request, $response, $responseCode, $message, $method = null, $incrementId = null, $url = null)
+    function logError($request, $response, $responseCode, $message, $method = null, $incrementId = null, $url = " ")
     {
         $event = new Varien_Object();
 

@@ -6,8 +6,8 @@ $installer = $this;
 $installer->startSetup();
 
 $installer->run(
-    "DROP TABLE IF EXISTS `bluesnap_api_logger`;
-CREATE TABLE  `bluesnap_api_logger` (
+    "DROP TABLE IF EXISTS ".$installer->getTable('bluesnap/logger').";
+CREATE TABLE  ".$installer->getTable('bluesnap/logger')." (
   `event_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `request` text,
   `response` text,

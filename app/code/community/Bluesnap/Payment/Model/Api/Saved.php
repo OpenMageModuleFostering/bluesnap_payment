@@ -73,18 +73,37 @@ class Bluesnap_Payment_Model_Api_Saved extends Bluesnap_Payment_Model_Api_Cse
 
         } else $sum['amount'] = 1;
 
-        if ($payment->getCcNumber()) {
-            $this->addCardToShopper($payment, $sum, $bsShopperId);
+        if (Mage::app()->getRequest()->getParam('encryptedCreditCard')) {
+            $response = $this->addCardToShopper($payment, $sum, $bsShopperId);
+            
+            $CCs = $response->descend("shopper-info/payment-info/credit-cards-info/credit-card-info");
+
+			foreach($CCs AS $cc) {		
+				if(
+					(int)$cc->descend("credit-card/expiration-month") == $payment->getCcExpMonth() &&
+					(int)$cc->descend("credit-card/expiration-year") == $payment->getCcExpYear() &&
+					(int)$cc->descend("credit-card/card-last-four-digits") == $payment->getCcLast4()										
+				) {
+					$validCC = $cc->descend("credit-card");
+				}		
+			}			
+                                      
+           	if($validCC) {
+				$type = (string) $validCC->descend("card-type");
+				$payment->setCcType($type)->save();
+			} else {
+				$type = (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : '');
+			}
 
         } else {
             $this->updateShopperWithNoCC($payment, $sum, $bsShopperId);
-
+            $type = (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : '');
         }
 
         $data1 = array(
             'web-info' => array(
-                'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
-                'remote-host' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                'remote-host' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                 'user-agent' => Mage::helper('core/http')->getHttpUserAgent(),
             ),
             'order-details' => array(
@@ -93,7 +112,7 @@ class Bluesnap_Payment_Model_Api_Saved extends Bluesnap_Payment_Model_Api_Cse
                         'shopper-id' => $bsShopperId,
                         'credit-card' => array(
                             'card-last-four-digits' => $payment->getCcLast4(),
-                            'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                            'card-type' => $type,
                         ),
                         'fraud-info' => array(
                             'fraud-session-id' => Mage::getSingleton('checkout/session')->getSessionId(),
@@ -208,16 +227,36 @@ class Bluesnap_Payment_Model_Api_Saved extends Bluesnap_Payment_Model_Api_Cse
             else $this->updateShopperWithNoCC($payment, $sum, $bsShopperId);
         }
 
+        $response = $this->retrieveShopper($bsShopperId, $action, true);
+       $CCs = $response->descend("shopper-info/payment-info/credit-cards-info/credit-card-info");
+
+        foreach($CCs AS $cc) {
+            if(
+                (int)$cc->descend("credit-card/expiration-month") == $payment->getCcExpMonth() &&
+                (int)$cc->descend("credit-card/expiration-year") == $payment->getCcExpYear() &&
+                (int)$cc->descend("credit-card/card-last-four-digits") == $payment->getCcLast4()
+            ) {
+                $validCC = $cc->descend("credit-card");
+            }
+        }
+
+        if($validCC) {
+            $type = (string) $validCC->descend("card-type");
+            $payment->setCcType($type)->save();
+        } else {
+            $type = (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : '');
+        }
+
         $data = array(
             'ordering-shopper' => array(
                 'shopper-id' => $bsShopperId,
                 'credit-card' => array(
                     'card-last-four-digits' => $payment->getCcLast4(),
-                    'card-type' => (isset($this->cardTypes[$payment->getCcType()]) ? $this->cardTypes[$payment->getCcType()] : ''),
+                    'card-type' => $type,
                 ),
                 'web-info' => array(
-                    'ip' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
-                    'remote-host' => !empty($order->getRemoteIp()) ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                    'ip' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
+                    'remote-host' => $order->getRemoteIp() ? $order->getRemoteIp() : $_SERVER['REMOTE_ADDR'],
                     'user-agent' => Mage::helper('core/http')->getHttpUserAgent(),
                 ),
                 'fraud-info' => array(
@@ -254,6 +293,10 @@ class Bluesnap_Payment_Model_Api_Saved extends Bluesnap_Payment_Model_Api_Cse
             ),
         );
 
+        if ($this->isAdminCapture($action)) {
+            unset($data['ordering-shopper']['fraud-info']);
+        }
+
         $xml = new SimpleXMLElement('<order xmlns="' . $this->_getXmlNs() . '"/>');
         $request = Mage::helper('bluesnap')->arrayToXml($data, $xml)->asXML();
 
@@ -269,8 +312,9 @@ class Bluesnap_Payment_Model_Api_Saved extends Bluesnap_Payment_Model_Api_Cse
             $response = $this->parseCreateResponse($response, $bsShopperId, $order);
         } catch (Exception $e) {
             Mage::logException($e);
-            //throw $e;
-            throw new Bluesnap_Payment_Model_Api_Exception(Mage::helper('core')->__('Something went wrong during placing your order. Please contact support.'));
+            
+            $error_message = Mage::helper('bluesnap')->getErroMessage($error_code);
+            throw new Bluesnap_Payment_Model_Api_Exception($error_message);
         }
 
         $this->getLogger()->logSuccess($this->_requestXml, $this->_responseXml, 0, "createOrder success", "createOrder", $order->getIncrementId(), $url);

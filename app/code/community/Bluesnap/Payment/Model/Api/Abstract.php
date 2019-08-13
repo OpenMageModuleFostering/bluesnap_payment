@@ -282,5 +282,16 @@ class Bluesnap_Payment_Model_Api_Abstract
         . ']]>';
     }
 
+    /**
+     * Method is checking if it's an admin capture call
+     * @param String $action name of the action
+     *
+     * @return bool
+     */
+    protected function isAdminCapture($action) {
+        return Mage::app()->getStore()->isAdmin()
+               && $action == "invoice";
+    }
+
 
 }

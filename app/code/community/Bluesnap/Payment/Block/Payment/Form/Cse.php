@@ -65,8 +65,33 @@ class Bluesnap_Payment_Block_Payment_Form_Cse extends Mage_Payment_Block_Form_Cc
      */
     protected function _toHtml()
     {
-        $this->setChild('cards', $this->getCardsBlock());
+     $this->setChild('cards', $this->getCardsBlock());
         $this->setChild('method_form_block', $this->getMethodFormBlock());
+          if( $this->getLayout()->getBlock('head')){
+        $this->getLayout()->getBlock('head')->addLinkRel('text/javascript','https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js');
+ 	        $this->getLayout()->getBlock('head')->addItem('js','bluesnap/credit-card-detect.js');
+ 			$this->getLayout()->getBlock('head')->addItem('js','bluesnap/payform.js');
+ 			$this->getLayout()->getBlock('head')->addItem('js','bluesnap/bsadmin.js');		
+ 			$this->getLayout()->getBlock('head')->addItem('js','lib/jquery/jquery-ui/jquery-ui.js');
+ 			$this->getLayout()->getBlock('head')->addItem('js','lib/jquery/jquery-ui/jquery-ui.js');
+ 			$this->getLayout()->getBlock('head')->addItem('skin_css', 'css/bluesnap/buynow/checkout.css');
+ 			$this->getLayout()->getBlock('head')->addItem('js_css', 'lib/jquery/jquery-ui/jquery-ui.css');
+ 		}
+
         return parent::_toHtml();
     }
+	
+	 protected function _prepareLayout()
+ 	    {
+ 			//$this->getLayout()->getBlock('head')->addLinkRel('text/javascript','https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js');
+ 	        //$this->getLayout()->getBlock('head')->addItem('js','bluesnap/credit-card-detect.js');
+ 			//$this->getLayout()->getBlock('head')->addItem('js','bluesnap/payform.js');
+ 			//$this->getLayout()->getBlock('head')->addItem('js','bluesnap/bsadmin.js');		
+ 			//$this->getLayout()->getBlock('head')->addItem('js','lib/jquery/jquery-ui/jquery-ui.js');
+ 			//$this->getLayout()->getBlock('head')->addItem('js','lib/jquery/jquery-ui/jquery-ui.js');
+ 			//$this->getLayout()->getBlock('head')->addItem('skin_css', 'css/bluesnap/buynow/checkout.css');
+ 			//$this->getLayout()->getBlock('head')->addItem('js_css', 'lib/jquery/jquery-ui/jquery-ui.css');
+ 			return parent::_prepareLayout();
+
+ 	    }
 }

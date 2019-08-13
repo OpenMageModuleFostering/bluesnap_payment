@@ -56,9 +56,9 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
 
         if ($quote) {
             $isApplicableMasks = array(
-                self::CHECK_USE_CHECKOUT,
-                self::CHECK_USE_FOR_COUNTRY,
-                self::CHECK_ORDER_TOTAL_MIN_MAX
+                // self::CHECK_USE_CHECKOUT,
+                // self::CHECK_USE_FOR_COUNTRY,
+                // self::CHECK_ORDER_TOTAL_MIN_MAX
             );
             foreach ($isApplicableMasks as $mask) {
                 if (!$this->isApplicableToQuote($quote, $mask)) {
@@ -212,6 +212,8 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
         $info->setCcLast($cseCcLast);
         $info->setCcLast4($cseCcLast);
         $info->setAdditionalInformation('is_saved', false);
+
+        return $info;
     }
 
     /**
@@ -248,11 +250,11 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
             if ($result['http_code'] == '201') {
                 $order = $payment->getOrder();
 
-                if (empty($order->getRemoteIp())) $payment->unsAdditionalInformation();
+                if (!$order->getRemoteIp()) $payment->unsAdditionalInformation();
 
                 $payment->setAdditionalInformation('transaction_type', 'shopping-context');
 				
-                if (!empty($order->getRemoteIp())) $payment->setAdditionalInformation('is_saved', true);
+                if ($order->getRemoteIp()) $payment->setAdditionalInformation('is_saved', true);
                 //getting the tranasaction id from location info
                 $loc = explode("/", $result['location']);
                 $transaction_id = $loc[count($loc) - 1];
@@ -275,14 +277,14 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
                     sprintf("BlueSnap Credit/Debit card authorized transaction. Order ID: \"%s\".", $transaction_id));
 
             } else {
-                $this->processError($result);
+                $this->processError($result,'authorize');
             }
 
         } else {
             $message = 'Unfortunately the transaction cannot be processed at this time due to an unspecified error, please try a different card or try again at a later time';
 
             Mage::log($message, Zend_Log::ERR);
-            $this->getLogger()->logError("", "", 0, $message, "cse::capture", $payment->getOrder()->getIncrementId());
+            $this->getLogger()->logError("", "", 0, $message, "cse::authorize", $payment->getOrder()->getIncrementId());
 
             Mage::throwException(Mage::helper('bluesnap')->__($message));
 
@@ -294,7 +296,7 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
      * @param $result
      * @throws Mage_Core_Exception
      */
-    public function processError($result)
+    public function processError($result, $type=NULL)
     {
         $error = Mage::helper('bluesnap')->__('Unfortunately the transaction cannot be processed at this time due to an unspecified error, please try a different card or try again at a later time');
         if (isset($result['message']['description'])) {
@@ -304,7 +306,8 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
                 $error .= "\r\n" . ' (' . $result['message']['invalid-property']['message-value'] . ')';
             }
         }
-        $this->getLogger()->logError("", "", "", $result['message']['description'], "cse::capture");
+        if($type=='authorize') $this->getLogger()->logError("", "", "", $error, "cse::authorize");
+        else $this->getLogger()->logError("", "", "", $result['message']['description'], "cse::capture");
         Mage::throwException($error);
     }
 
@@ -318,6 +321,7 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
      */
     public function capture(Varien_Object $payment, $amount)
     {
+    	//Mage::log($payment->getData(),NULL,'bs.log');
         $apiType = $payment->getAdditionalInformation('is_saved') ? 'saved' : 'cse';
         $type = $payment->getAdditionalInformation('transaction_type') == 'shopping-context' ? 'auth' : 'capture';
 
@@ -342,10 +346,11 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
             if ($result = $api->placeOrder($payment, $bsShopperId)) {
                 if (!empty($result['invoiceId'])) {
                     $bsTransactionId = $result['invoiceId'];
-                    //seems bug? itzik
-                    //$status = Bluesnap_Payment_Helper_Config::BLUESNAP_DEFAULT_INVOICE_STATUS;
+                  
+                  // Mage::log('error101',NULL,'errorTest.log');
+                  
                     $status = $result['status'];
-					 if (empty($order->getRemoteIp())) $payment->unsAdditionalInformation();
+					 if (!$order->getRemoteIp()) $payment->unsAdditionalInformation();
 
                     /* @var $order Mage_Sales_Model_Order */
 
@@ -417,7 +422,7 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
                 }
             } else {
                 $message = 'Unfortunately the transaction cannot be processed at this time due to an unspecified error, please try a different card or try again at a later time';
-
+				
                 Mage::log($message, Zend_Log::ERR);
                 $this->getLogger()->logError("", "", 0, $message, "cse::capture", $payment->getOrder()->getIncrementId());
 
@@ -440,7 +445,7 @@ class Bluesnap_Payment_Model_Payment_Cse extends Bluesnap_Payment_Model_Payment_
 
                         $order = $payment->getOrder();
 						
-						 if (empty($order->getRemoteIp())) $payment->unsAdditionalInformation();
+						 if ($order->getRemoteIp()) $payment->unsAdditionalInformation();
 
                         $payment->setAdditionalInformation('transactionAmount', $result['transaction']['amount']);
                         $payment->setAdditionalInformation('transactionCurrency', $result['transaction']['currency']);

@@ -30,19 +30,10 @@ class Bluesnap_Payment_Block_Adminhtml_Sales_Order_Grid extends Mage_Adminhtml_B
     {
         $collection = Mage::getResourceModel($this->_getCollectionClass());
 
-        //billing name, shipping name
-        //  $adapter       = $this->getReadConnection();
-        //$ifnullFirst   = $adapter->getIfNullSql('{{table}}.firstname', $adapter->quote(''));
-        //$ifnullLast    = $adapter->getIfNullSql('{{table}}.lastname', $adapter->quote(''));
-
-        //$concatAddress = $adapter->getConcatSql(array($ifnullFirst, $adapter->quote(' '), $ifnullLast));
-        $collection->getSelect()->columns(array('billing_name' => "CONCAT(customer_firstname,' ',customer_lastname)"));
-        $collection->getSelect()->columns(array('shipping_name' => "CONCAT(customer_firstname,' ',customer_lastname)"));
-        $collection->getSelect()->columns(array('payment_method' => new Zend_Db_Expr("(SELECT method FROM sales_flat_order_payment WHERE parent_id=main_table.entity_id)")));
-
-        //     echo $collection->getSelect()->__toString();
-        //   die();
-
+		$prefix = Mage::getConfig()->getTablePrefix();
+        $collection->getSelect()->columns(array('payment_method' => new Zend_Db_Expr("(SELECT method FROM " . $prefix . "sales_flat_order_payment WHERE parent_id=main_table.entity_id)")));
+        $collection->getSelect()->columns(array('shipping_name' => new Zend_Db_Expr("(SELECT CONCAT(firstname,' ',lastname) FROM " . $prefix . "sales_flat_order_address WHERE parent_id=main_table.entity_id AND address_type='shipping')")));
+        $collection->getSelect()->columns(array('billing_name' => new Zend_Db_Expr("(SELECT CONCAT(firstname,' ',lastname) FROM " . $prefix . "sales_flat_order_address WHERE parent_id=main_table.entity_id AND address_type='billing')")));
         $this->setCollection($collection);
 
         if ($this->getCollection()) {

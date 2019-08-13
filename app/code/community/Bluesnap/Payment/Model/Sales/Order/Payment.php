@@ -116,8 +116,8 @@ class Bluesnap_Payment_Model_Sales_Order_Payment extends Mage_Sales_Model_Order_
         }
         // check for authorization amount to be equal to grand total
         $this->setShouldCloseParentTransaction(false);
-        $isSameCurrency = $this->_isSameCurrency();
-        if (!$isSameCurrency || !$this->_isCaptureFinal($amount)) {
+       // $isSameCurrency = $this->_isSameCurrency();
+        if (!$this->_isCaptureFinal($amount)) {
             $this->setIsFraudDetected(true);
         }
 
