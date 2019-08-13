@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+
+    <!-- BuyNow Payment Page -->
+    <bluesnap_checkout_redirect>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/bluesnap/buynow/checkout.css</name>
+            </action>
+        </reference>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="bluesnap/buynow_info_order" name="bluesnap_buynow.checkout.info.order">
+                <block type="sales/order_items" name="order_items"
+                    template="bluesnap/payment/buynow/checkout/info/order/items.phtml">
+                    <action method="addItemRender">
+                        <type>default</type>
+                        <block>sales/order_item_renderer_default</block>
+                        <template>bluesnap/payment/buynow/checkout/info/order/items/renderer/default.phtml</template>
+                    </action>
+                    <action method="addItemRender">
+                        <type>grouped</type>
+                        <block>sales/order_item_renderer_grouped</block>
+                        <template>bluesnap/payment/buynow/checkout/info/order/items/renderer/default.phtml</template>
+                    </action>
+                    <action method="addItemRender">
+                        <type>bundle</type>
+                        <block>bundle/sales_order_items_renderer</block>
+                        <template>bluesnap/payment/buynow/checkout/info/order/items/renderer/bundle.phtml</template>
+                    </action>
+                    <action method="addItemRender">
+                        <type>downloadable</type>
+                        <block>downloadable/sales_order_item_renderer_downloadable</block>
+                        <template>bluesnap/payment/buynow/checkout/info/order/items/renderer/downloadable.phtml
+                        </template>
+                    </action>
+                    <block type="bluesnap/order_totals" name="order_totals"
+                        template="bluesnap/payment/sales/order/totals.phtml">
+                        <action method="setLabelProperties">
+                            <value>colspan="3" class="a-right"</value>
+                        </action>
+                        <action method="setValueProperties">
+                            <value>class="last a-right"</value>
+                        </action>
+                        <block type="tax/sales_order_tax" name="tax" template="tax/order/tax.phtml"/>
+                    </block>
+                </block>
+            </block>
+            <block type="bluesnap/buynow_iframe" name="bluesnap_buynow.checkout.iframe">
+                <action method="setWidth">
+                    <w>900px</w>
+                </action>
+                <action method="setHeight">
+                    <h>1000px</h>
+                </action>
+                <action method="setStyle">
+                    <style><![CDATA[border: 1px solid #ffffff]]></style>
+                </action>
+            </block>
+        </reference>
+    </bluesnap_checkout_redirect>
+
+    <!-- Redirect page after payment -->
+    <bluesnap_checkout_callback>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>bluesnap/payment/buynow/redirect.phtml</template>
+            </action>
+        </reference>
+    </bluesnap_checkout_callback>
+
+    <!-- Add CSE script on the checkout page -->
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/bluesnap/buynow/checkout.css</name>
+            </action>  
+         
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/bluesnap/credit-card-detect.js</name>
+            </action>
+
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/bluesnap/payform.js</name>
+            </action>
+
+             <action method="addItem">
+                <type>js</type>
+                <name>lib/jquery/jquery-ui/jquery-ui.js</name>
+            </action>
+             <action method="addItem">
+                <type>js_css</type>
+                <name>lib/jquery/jquery-ui/jquery-ui.css</name>
+            </action>
+
+            <block type="core/text" name="bluesnap.cse">
+                <action method="setText">
+                    <text>
+                        <![CDATA[<script type="text/javascript" src="https://gateway.bluesnap.com/js/cse/v1.0.2/bluesnap.js"></script>]]>
+                    </text>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_index> 
+
+
+    
+
+
+
+</layout>

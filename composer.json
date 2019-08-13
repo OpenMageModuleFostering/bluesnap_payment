@@ -1,0 +1,16 @@
+{
+    "name": "OpenMageModuleFostering/bluesnap_payment",
+    "type": "magento-module",
+    "license": "Community-GPL",
+    "homepage": "",
+    "description": "Magento Extension for BlueSnap payment",
+    "authors": [
+    {
+        "name": "Nachshon Fishbane",
+        "email": "nachshon@fisha.co.il"
+    }
+],
+    "suggest": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}

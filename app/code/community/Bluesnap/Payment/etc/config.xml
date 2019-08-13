@@ -1,0 +1,420 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Bluesnap_Payment>
+            <version>2.0.2.4</version>
+        </Bluesnap_Payment>
+    </modules>
+
+    <global>
+        <helpers>
+            <bluesnap>
+                <class>Bluesnap_Payment_Helper</class>
+            </bluesnap>
+            <adminhtml>
+                <rewrite>
+                    <sales>Bluesnap_Payment_Helper_Sales</sales>
+                </rewrite>
+            </adminhtml>
+        </helpers>
+
+        <models>
+            <bluesnap>
+                <class>Bluesnap_Payment_Model</class>
+                <resourceModel>bluesnap_resource</resourceModel>
+            </bluesnap>
+
+            <bluesnap_resource>
+                <class>Bluesnap_Payment_Model_Resource</class>
+                <entities>
+                    <logger>
+                        <table>bluesnap_api_logger</table>
+                    </logger>
+
+                </entities>
+            </bluesnap_resource>
+
+            <directory>
+                <rewrite>
+                    <currency>Bluesnap_Payment_Model_Directory_Currency</currency>
+                    <!-- directory observer fix -->
+                    <observer>Bluesnap_Payment_Model_Directory_Observer</observer>
+                </rewrite>
+            </directory>
+
+            <directory_resource>
+                <rewrite>
+                    <currency>Bluesnap_Payment_Model_Resource_Directory_Currency</currency>
+
+                </rewrite>
+            </directory_resource>
+
+            <sales>
+                <rewrite>
+                    <order>Bluesnap_Payment_Model_Sales_Order</order>
+                    <order_payment>Bluesnap_Payment_Model_Sales_Order_Payment</order_payment>
+                </rewrite>
+            </sales>
+        </models>
+        <resources>
+            <bluesnap_setup>
+                <setup>
+                    <module>Bluesnap_Payment</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </bluesnap_setup>
+            <bluesnap_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </bluesnap_write>
+            <bluesnap_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </bluesnap_read>
+        </resources>
+        <blocks>
+            <bluesnap>
+                <class>Bluesnap_Payment_Block</class>
+            </bluesnap>
+            <tax>
+                <rewrite>
+                    <checkout_grandtotal>Bluesnap_Payment_Block_Checkout_Grandtotal</checkout_grandtotal>
+                </rewrite>
+            </tax>
+            <checkout>
+                <rewrite>
+                    <cart_totals>Bluesnap_Payment_Block_Checkout_Cart_Totals</cart_totals>
+                </rewrite>
+
+            </checkout>
+            <customer>
+                <rewrite>
+                    <widget_name>Bluesnap_Payment_Block_Customer_Widget_Name</widget_name>
+                </rewrite>
+            </customer>
+            <sales>
+                <rewrite>
+                    <order_totals>Bluesnap_Payment_Block_Order_Totals</order_totals>
+                </rewrite>
+            </sales>
+            <adminhtml>
+                <rewrite>
+					<sales_order_grid>Bluesnap_Payment_Block_Adminhtml_Sales_Order_Grid</sales_order_grid>					                    					<sales_order_view_tab_creditmemos>Bluesnap_Payment_Block_Adminhtml_Sales_Order_View_Tab_Creditmemos</sales_order_view_tab_creditmemos>
+					<sales_order_view_tab_invoices>Bluesnap_Payment_Block_Adminhtml_Sales_Order_View_Tab_Invoices</sales_order_view_tab_invoices>
+					<sales_order_totals>Bluesnap_Payment_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+					<sales_order_invoice_totals>Bluesnap_Payment_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
+					<sales_order_creditmemo_totals>Bluesnap_Payment_Block_Adminhtml_Sales_Order_Creditmemo_Totals</sales_order_creditmemo_totals>
+                </rewrite>
+
+            </adminhtml>
+        </blocks>
+        <product>
+            <collection>
+                <attributes>
+                    <bluesnap_contract_id/>
+                </attributes>
+            </collection>
+        </product>
+        <currency>
+            <import>
+                <services>
+                    <bluesnap>
+                        <name>BlueSnap</name>
+                        <model>bluesnap/directory_currency_import</model>
+                    </bluesnap>
+                </services>
+            </import>
+        </currency>
+        <payment>
+            <cc>
+                <types>
+                    <AE>
+                        <order>21</order>
+                    </AE>
+                    <CB>
+                        <code>CB</code>
+                        <name>Carte Bleue</name>
+                        <order>100</order>
+                    </CB>
+                    <DC>
+                        <code>DC</code>
+                        <name>Diners Club</name>
+                        <order>22</order>
+                    </DC>
+                    <JCB>
+                        <order>23</order>
+                    </JCB>
+                </types>
+            </cc>
+        </payment>
+
+        <template>
+            <email>
+                <!-- Give the template a uniqiue name, you'll need to refer to this later when sending the email-->
+                <transaction_declined>
+                    <label>Transaction Declined</label>
+                    <file>transaction_declined.html</file>
+                    <type>html</type>
+                </transaction_declined>
+
+                <transaction_refunded>
+                    <label>Transaction Refunded</label>
+                    <file>transaction_refunded.html</file>
+                    <type>html</type>
+                </transaction_refunded>
+
+                <transaction_refund_failed>
+                    <label>Transaction Refund Failed</label>
+                    <file>transaction_refund_failed.html</file>
+                    <type>html</type>
+                </transaction_refund_failed>
+
+                <transaction_chargeback>
+                    <label>Transaction Chargeback</label>
+                    <file>transaction_chargeback.html</file>
+                    <type>html</type>
+                </transaction_chargeback>
+
+            </email>
+        </template>
+
+        <events>
+            <sales_order_save_before>
+                <observers>
+                    <bluesnap_sales_order_save_before>
+                        <type>model</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>salesOrderSaveBefore</method>
+                    </bluesnap_sales_order_save_before>
+                </observers>
+            </sales_order_save_before>
+
+            <sales_quote_save_before>
+                <observers>
+                    <bluesnap_sales_quote_save_before>
+                        <type>model</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>salesQuoteSaveBefore</method>
+                    </bluesnap_sales_quote_save_before>
+                </observers>
+            </sales_quote_save_before>
+
+            <sales_order_invoice_register>
+                <observers>
+                    <bluesnap_sales_order_invoice_register>
+                        <type>singleton</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>salesOrderInvoiceRegister</method>
+                    </bluesnap_sales_order_invoice_register>
+                </observers>
+            </sales_order_invoice_register>
+
+        </events>
+
+
+    </global>
+    <frontend>
+        <routers>
+            <bluesnap>
+                <use>standard</use>
+                <args>
+                    <module>Bluesnap_Payment</module>
+                    <frontName>bluesnap</frontName>
+                </args>
+            </bluesnap>
+        </routers>
+        <layout>
+            <updates>
+                <bluesnap>
+                    <file>bluesnap/payment.xml</file>
+                </bluesnap>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Bluesnap_Payment>
+                    <files>
+                        <default>Bluesnap_Payment.csv</default>
+                    </files>
+                </Bluesnap_Payment>
+            </modules>
+        </translate>
+    </frontend>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Bluesnap_Payment>
+                    <files>
+                        <default>Bluesnap_Payment.csv</default>
+                    </files>
+                </Bluesnap_Payment>
+            </modules>
+        </translate>
+        <events>
+            <admin_system_config_changed_section_bluesnap>
+                <observers>
+                    <bluesnap_system_config_changed_section_bluesnap>
+                        <type>singleton</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>checkSecure</method>
+                    </bluesnap_system_config_changed_section_bluesnap>
+                </observers>
+            </admin_system_config_changed_section_bluesnap>
+            <sales_order_grid_collection_load_before_>
+                <observers>
+                    <bluesnap_sales_order_grid_collection_load_before>
+                        <type>singleton</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>salesOrderGridCollectionLoadBefore</method>
+                    </bluesnap_sales_order_grid_collection_load_before>
+                </observers>
+            </sales_order_grid_collection_load_before_>
+
+            <core_block_abstract_prepare_layout_before_>
+                <observers>
+                    <bluesnap_core_block_abstract_prepare_layout_before>
+                        <type>singleton</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>appendCustomColumn</method>
+                    </bluesnap_core_block_abstract_prepare_layout_before>
+                </observers>
+            </core_block_abstract_prepare_layout_before_>
+
+            <sales_order_creditmemo_refund>
+                <observers>
+                    <bluesnap_sales_order_creditmemo_refund>
+                        <type>singleton</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>salesOrderCreditmemoRefund</method>
+                    </bluesnap_sales_order_creditmemo_refund>
+                </observers>
+
+            </sales_order_creditmemo_refund>
+
+            <sales_order_invoice_register>
+                <observers>
+                    <bluesnap_sales_order_invoice_register>
+                        <type>singleton</type>
+                        <class>Bluesnap_Payment_Model_Observer</class>
+                        <method>salesOrderInvoiceRegister</method>
+                    </bluesnap_sales_order_invoice_register>
+                </observers>
+            </sales_order_invoice_register>
+
+        </events>
+    </adminhtml>
+    <default>
+        <bluesnap>
+            <general>
+                <protection_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <api_password backend_model="adminhtml/system_config_backend_encrypted"/>
+            </general>
+            <logger>
+                <mail_subject>Api Alert</mail_subject>
+                <mail_template>
+                    <![CDATA[Hello! 
+
+%method% Api Alert 
+
+----------------------------------
+
+%timestamp% %priority_name% (%priority%): 
+
+%message%
+
+----------------------------------
+Request:
+%request%
+
+----------------------------------
+Response:
+%response%]]>
+                </mail_template>
+            </logger>
+
+            <!-- <buynow>
+                 <active>0</active>
+                 <title><![CDATA[Local Payment Options]]></title>
+                 <comment><![CDATA[You will be redirected to to a secure order page when you place an order.]]></comment>
+             </buynow> -->
+            <cse>
+                <active>0</active>
+                <title><![CDATA[Credit Cards]]></title>
+                <comment><![CDATA[]]></comment>
+                <cse_public_key backend_model="adminhtml/system_config_backend_encrypted"/>
+            </cse>
+        </bluesnap>
+        <payment>
+            <!--  <buynow>
+                  <model>bluesnap/payment_buynow</model>
+                  <active>1</active>
+                  <title>Alternative payment methods</title>
+                  <payment_action>authorize_capture</payment_action>
+              </buynow>-->
+            <cse>
+                <cctypes>VI,MC,AE,DC,JCB,DI,CB</cctypes>
+                <model>bluesnap/payment_cse</model>
+                <active>1</active>
+                <title>Credit/Debit card</title>
+                <payment_action>authorize_capture</payment_action>
+                <useccv>1</useccv>
+            </cse>
+        </payment>
+
+    </default>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <bluesnap before="Mage_Adminhtml">Bluesnap_Payment_Adminhtml</bluesnap>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <bluesnap>
+                    <file>bluesnap.xml</file>
+                </bluesnap>
+            </updates>
+        </layout>
+    </adminhtml>
+
+
+    <phpunit>
+        <suite>
+            <modules>
+                <Bluesnap_Payment/>
+            </modules>
+        </suite>
+    </phpunit>
+    <crontab>
+        <jobs>
+            <bluesnap>
+                <schedule>
+                    <cron_expr>0 0 * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>bluesnap/observer::sendCron</model>
+                </run>
+            </bluesnap>
+        </jobs>
+    </crontab>
+    <default>
+	<bluesnap>
+		<logger>
+			<collect_data_for>90</collect_data_for>
+		</logger>
+	</bluesnap>
+    </default>
+
+</config>

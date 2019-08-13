@@ -1,0 +1,19 @@
+<?php
+/**
+ * @see Bluesnap_Payment_Block_Payment_Info_Buynow
+ * @var $this Bluesnap_Payment_Block_Payment_Info_Buynow
+ */
+?>
+<?php 
+echo $this->__('BuyNow payment method'); 
+?>
+<br />
+<?php
+echo $this->__("Credit Card last 4 digits:"). $this->getInfo()->getCcLast4();
+?>
+<br />
+<?php
+echo $this->__('Expriration Date:') . $this->getInfo()->getCcExpMonth()."/" .  $this->getInfo()->getCcExpYear();
+
+
+?>

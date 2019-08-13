@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_sales_order_create_index>
+    	<reference name="head">
+    		<block type="adminhtml/template"  output="toHtml" name="head_js" as="head_js" template="bluesnap/head_js.phtml" />
+            <action method="addJs">
+                <script>bluesnap/bsadmin.js</script>
+            </action>
+        </reference>
+        <reference name="totals">
+            <action method="setTemplate">
+                <template>bluesnap/sales/order/totals.phtml</template>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_index>
+    
+      <adminhtml_bluesnap_logger_index>
+
+        <reference name="content">
+            <block type="bluesnap/adminhtml_api_logger" name="bluesnap_api_logger" />
+        </reference>
+    </adminhtml_bluesnap_logger_index>
+ 
+</layout>

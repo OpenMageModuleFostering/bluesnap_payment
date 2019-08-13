@@ -1,0 +1,397 @@
+<?xml version = "1.0"?>
+<items>
+    <USD>
+        <name><![CDATA[United States Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </USD>
+    <EUR>
+        <name><![CDATA[Euro]]></name>
+        <local_supported>Y</local_supported>
+    </EUR>
+    <GBP>
+        <name><![CDATA[United Kingdom Pounds]]></name>
+        <local_supported>Y</local_supported>
+    </GBP>
+    <CAD>
+        <name><![CDATA[Canada Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </CAD>
+    <JPY>
+        <name><![CDATA[Japan Yen]]></name>
+        <local_supported>Y</local_supported>
+    </JPY>
+    <CHF>
+        <name><![CDATA[Switzerland Francs]]></name>
+        <local_supported>Y</local_supported>
+    </CHF>
+    <AFN>
+        <name><![CDATA[Afghanistan Afghanis]]></name>
+        <local_supported>Y</local_supported>
+    </AFN>
+    <ALL>
+        <name><![CDATA[Albania Leke]]></name>
+        <local_supported>Y</local_supported>
+    </ALL>
+    <DZD>
+        <name><![CDATA[Algeria Dinars]]></name>
+        <local_supported>Y</local_supported>
+    </DZD>
+    <ARS>
+        <name><![CDATA[Argentina Pesos]]></name>
+        <local_supported>Y</local_supported>
+    </ARS>
+    <AWG>
+        <name><![CDATA[Aruban Guilder]]></name>
+        <local_supported>Y</local_supported>
+    </AWG>
+    <AUD>
+        <name><![CDATA[Australia Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </AUD>
+    <BHD>
+        <name><![CDATA[Bahraini Dinar]]></name>
+        <local_supported>Y</local_supported>
+    </BHD>
+    <BBD>
+        <name><![CDATA[Barbados Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </BBD>
+    <BYR>
+        <name><![CDATA[Belarusian Ruble]]></name>
+        <local_supported>Y</local_supported>
+    </BYR>
+
+    <BOB>
+        <name><![CDATA[Bolivia Boliviano]]></name>
+        <local_supported>Y</local_supported>
+    </BOB>
+    <BAM>
+        <name><![CDATA[Bosnia and Herzegovina Marks]]></name>
+        <local_supported>Y</local_supported>
+    </BAM>
+    <BWP>
+        <name><![CDATA[Botswana Pula]]></name>
+        <local_supported>Y</local_supported>
+    </BWP>
+    <BRL>
+        <name><![CDATA[Brazil Reais]]></name>
+        <local_supported>Y</local_supported>
+    </BRL>
+    <BND>
+        <name><![CDATA[Brunei Dollar]]></name>
+        <local_supported>Y</local_supported>
+    </BND>
+    <BGN>
+        <name><![CDATA[Bulgaria Leva]]></name>
+        <local_supported>Y</local_supported>
+    </BGN>
+    <KHR>
+        <name><![CDATA[Cambodia Riel]]></name>
+        <local_supported>Y</local_supported>
+    </KHR>
+    <KYD>
+        <name><![CDATA[Caymans Islands Dollar]]></name>
+        <local_supported>Y</local_supported>
+    </KYD>
+    <XOF>
+        <name><![CDATA[CFA Francs BCEAO]]></name>
+        <local_supported>Y</local_supported>
+    </XOF>
+    <CLP>
+        <name><![CDATA[Chile Pesos]]></name>
+        <local_supported>Y</local_supported>
+    </CLP>
+    <CNY>
+        <name><![CDATA[China Yuan Renminbi]]></name>
+        <local_supported>Y</local_supported>
+    </CNY>
+    <COP>
+        <name><![CDATA[Colombia Pesos]]></name>
+        <local_supported>Y</local_supported>
+    </COP>
+    <CRC>
+        <name><![CDATA[Costa Rica Colones]]></name>
+        <local_supported>Y</local_supported>
+    </CRC>
+    <HRK>
+        <name><![CDATA[Croatian Kuna]]></name>
+        <local_supported>Y</local_supported>
+    </HRK>
+    <CZK>
+        <name><![CDATA[Czech Republic Koruny]]></name>
+        <local_supported>Y</local_supported>
+    </CZK>
+    <DKK>
+        <name><![CDATA[Denmark Kroner]]></name>
+        <local_supported>Y</local_supported>
+    </DKK>
+    <XCD>
+        <name><![CDATA[East Caribbean Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </XCD>
+    <EGP>
+        <name><![CDATA[Egypt Pounds]]></name>
+        <local_supported>Y</local_supported>
+    </EGP>
+    <FJD>
+        <name><![CDATA[Fiji Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </FJD>
+    <GEL>
+        <name><![CDATA[Georgia Lari]]></name>
+        <local_supported>Y</local_supported>
+    </GEL>
+    <GIP>
+        <name><![CDATA[Gibraltar Pound]]></name>
+        <local_supported>Y</local_supported>
+    </GIP>
+    <GTQ>
+        <name><![CDATA[Guatemala Quetzal]]></name>
+        <local_supported>Y</local_supported>
+    </GTQ>
+    <HKD>
+        <name><![CDATA[Hong Kong Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </HKD>
+    <HUF>
+        <name><![CDATA[Hungary Forint]]></name>
+        <local_supported>Y</local_supported>
+    </HUF>
+    <ISK>
+        <name><![CDATA[Iceland Kronur]]></name>
+        <local_supported>Y</local_supported>
+    </ISK>
+    <INR>
+        <name><![CDATA[India Rupees]]></name>
+        <local_supported>Y</local_supported>
+    </INR>
+    <IDR>
+        <name><![CDATA[Indonesia Rupiahs]]></name>
+        <local_supported>Y</local_supported>
+    </IDR>
+    <ILS>
+        <name><![CDATA[Israel New Shekels]]></name>
+        <local_supported>Y</local_supported>
+    </ILS>
+    <JMD>
+        <name><![CDATA[Jamaica Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </JMD>
+    <JOD>
+        <name><![CDATA[Jordan Dinars]]></name>
+        <local_supported>Y</local_supported>
+    </JOD>
+    <KZT>
+        <name><![CDATA[Kazakhstani Tenge]]></name>
+        <local_supported>Y</local_supported>
+    </KZT>
+    <KES>
+        <name><![CDATA[Kenyan Shilling]]></name>
+        <local_supported>Y</local_supported>
+    </KES>
+    <KWD>
+        <name><![CDATA[Kuwait Dinars]]></name>
+        <local_supported>Y</local_supported>
+    </KWD>
+    <LBP>
+        <name><![CDATA[Lebanon Pounds]]></name>
+        <local_supported>Y</local_supported>
+    </LBP>
+    <MKD>
+        <name><![CDATA[Macedonia Denar]]></name>
+        <local_supported>Y</local_supported>
+    </MKD>
+    <MWK>
+        <name><![CDATA[Malawi Kwacha]]></name>
+        <local_supported>Y</local_supported>
+    </MWK>
+    <MYR>
+        <name><![CDATA[Malaysia Ringgits]]></name>
+        <local_supported>Y</local_supported>
+    </MYR>
+    <MRO>
+        <name><![CDATA[Mauritania Ouguiya]]></name>
+        <local_supported>Y</local_supported>
+    </MRO>
+    <MXN>
+        <name><![CDATA[Mexico Pesos]]></name>
+        <local_supported>Y</local_supported>
+    </MXN>
+    <MDL>
+        <name><![CDATA[Moldovan Leu]]></name>
+        <local_supported>Y</local_supported>
+    </MDL>
+    <MAD>
+        <name><![CDATA[Morocco Dirhams]]></name>
+        <local_supported>Y</local_supported>
+    </MAD>
+    <NAD>
+        <name><![CDATA[Namibian Dollar]]></name>
+        <local_supported>Y</local_supported>
+    </NAD>
+    <NPR>
+        <name><![CDATA[Nepalese Rupee]]></name>
+        <local_supported>Y</local_supported>
+    </NPR>
+    <AMD>
+        <name><![CDATA[New Ruble/Dram]]></name>
+        <local_supported>Y</local_supported>
+    </AMD>
+    <NZD>
+        <name><![CDATA[New Zealand Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </NZD>
+    <NGN>
+        <name><![CDATA[Nigeria Nairas]]></name>
+        <local_supported>Y</local_supported>
+    </NGN>
+    <NOK>
+        <name><![CDATA[Norway Kroner]]></name>
+        <local_supported>Y</local_supported>
+    </NOK>
+    <OMR>
+        <name><![CDATA[Oman Rial]]></name>
+        <local_supported>Y</local_supported>
+    </OMR>
+
+    <PAB>
+        <name><![CDATA[Panamanian Balboa]]></name>
+        <local_supported>Y</local_supported>
+    </PAB>
+    <PKR>
+        <name><![CDATA[Pakistan Rupees]]></name>
+        <local_supported>Y</local_supported>
+    </PKR>
+    <PGK>
+        <name><![CDATA[Papua New Guinea Kina]]></name>
+        <local_supported>Y</local_supported>
+    </PGK>
+    <UYU>
+        <name><![CDATA[Peso Uruguayo]]></name>
+        <local_supported>Y</local_supported>
+    </UYU>
+    <PHP>
+        <name><![CDATA[Philippines Pesos]]></name>
+        <local_supported>Y</local_supported>
+    </PHP>
+    <PLN>
+        <name><![CDATA[Poland Zlotych]]></name>
+        <local_supported>Y</local_supported>
+    </PLN>
+    <QAR>
+        <name><![CDATA[Qatari Riyal]]></name>
+        <local_supported>Y</local_supported>
+    </QAR>
+    <RUB>
+        <name><![CDATA[Russia Rubles]]></name>
+        <local_supported>Y</local_supported>
+    </RUB>
+    <SAR>
+        <name><![CDATA[Saudi Arabia Riyals]]></name>
+        <local_supported>Y</local_supported>
+    </SAR>
+    <RSD>
+        <name><![CDATA[Serbian Dinar]]></name>
+        <local_supported>Y</local_supported>
+    </RSD>
+    <SCR>
+        <name><![CDATA[Seychelles Rupee]]></name>
+        <local_supported>Y</local_supported>
+    </SCR>
+    <SGD>
+        <name><![CDATA[Singapore Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </SGD>
+    <ZAR>
+        <name><![CDATA[South Africa Rand]]></name>
+        <local_supported>Y</local_supported>
+    </ZAR>
+    <KRW>
+        <name><![CDATA[South Korea Won]]></name>
+        <local_supported>Y</local_supported>
+    </KRW>
+    <LKR>
+        <name><![CDATA[Sri Lanka Rupee]]></name>
+        <local_supported>Y</local_supported>
+    </LKR>
+    <SDG>
+        <name><![CDATA[Sudanese Pound]]></name>
+        <local_supported>Y</local_supported>
+    </SDG>
+    <SEK>
+        <name><![CDATA[Sweden Kronor]]></name>
+        <local_supported>Y</local_supported>
+    </SEK>
+    <ANG>
+        <name><![CDATA[Netherlands Antillean Guilder]]></name>
+        <local_supported>Y</local_supported>
+    </ANG>
+    <TZS>
+        <name><![CDATA[Tanzanian Shilling]]></name>
+        <local_supported>Y</local_supported>
+    </TZS>
+    <TWD>
+        <name><![CDATA[Taiwan New Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </TWD>
+    <TTD>
+        <name><![CDATA[Trinidad and Tobago Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </TTD>
+    <TND>
+        <name><![CDATA[Tunisian Dollar]]></name>
+        <local_supported>Y</local_supported>
+    </TND>
+    <AED>
+        <name><![CDATA[United Arab Emirates Dirhams]]></name>
+        <local_supported>Y</local_supported>
+    </AED>
+    <VEF>
+        <name><![CDATA[Venezuela Bolivares Fuertes]]></name>
+        <local_supported>Y</local_supported>
+    </VEF>
+    <VND>
+        <name><![CDATA[Vietnam Dong]]></name>
+        <local_supported>Y</local_supported>
+    </VND>
+    <THB>
+        <name><![CDATA[Thailand Baht]]></name>
+        <local_supported>Y</local_supported>
+    </THB>
+    <UAH>
+        <name><![CDATA[Ukrainian Hryvnia]]></name>
+        <local_supported>Y</local_supported>
+    </UAH>
+    <UZS>
+        <name><![CDATA[Uzbekistan Sum]]></name>
+        <local_supported>Y</local_supported>
+    </UZS>
+    <RON>
+        <name><![CDATA[Romania New Lei]]></name>
+        <local_supported>Y</local_supported>
+    </RON>
+    <TRY>
+        <name><![CDATA[Turkey New Lira]]></name>
+        <local_supported>Y</local_supported>
+    </TRY>
+    <PEN>
+        <name><![CDATA[Peruvian Sol]]></name>
+        <local_supported>Y</local_supported>
+    </PEN>
+    <BSD>
+        <name><![CDATA[Bahamas Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </BSD>
+    <BMD>
+        <name><![CDATA[Bermuda Dollars]]></name>
+        <local_supported>Y</local_supported>
+    </BMD>
+    <DOP>
+        <name><![CDATA[Dominican Peso]]></name>
+        <local_supported>Y</local_supported>
+    </DOP>
+    <MUR>
+        <name><![CDATA[Mauritius Rupee]]></name>
+        <local_supported>Y</local_supported>
+    </MUR>
+</items>

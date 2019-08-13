@@ -1,0 +1,255 @@
+<?php
+/**
+ * @see Bluesnap_Payment_Block_Payment_Form_Cse
+ * @var $this Bluesnap_Payment_Block_Payment_Form_Cse
+ * //http://getspritexy.com/
+ */
+?>
+
+<?php $_code = $this->getMethodCode() ?>
+<?php
+$cards = $this->getCards() ?>
+
+<script type="text/javascript">// <![CDATA[
+    jQuery( document ).ready(function($) {
+        $('#cse_cc_number').creditCardType();
+        $( ".tooltip" ).tooltip(
+            {
+                position: { my: 'center bottom', at: 'center top-10' },
+                show: { effect: "fade", duration: 800 }
+            }
+        );
+    });
+    //  jQuery.$.widget.tooltip.prototype.options.duration=800;
+    //  jQuery.$.widget.tooltip.prototype.options.effect='fadeIn';
+
+	function removeSpaceCc(el){
+		var val = el.value.replace(/\s/g, "");
+		document.getElementById("cse_cc_number").value=val;
+	}
+
+
+
+
+
+    // ]]></script>
+
+
+
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+
+    <?php if (count($cards)): ?>
+        <li>
+            <ul class="saved-cc">
+                <?php $cn=0; ?>
+                <?php foreach ($this->getCards() as $id => $card): ?>
+                    <?php $cn++; ?>
+                    <li>
+                        <input type="radio" name="bluesnap_card_saved" id="<?php echo $_code . '_' . $id ?>"
+                               value="<?php echo $card['enc_type'] ?>" onclick="$('card-form').hide()"
+                               class="validate-one-required-by-name bluesnap_card_saved" <?php echo $cn==count($this->getCards())?'checked="checked"':"";?> />
+                        <label for="<?php echo $_code . '_' . $id ?>"
+                               style="padding-left: 10px"><?php echo $card['type'] ?>
+                            -<?php echo $card['card'] ?></label>
+                    </li>
+                <?php endforeach ?>
+                <li><a href="#"
+                       onclick="$('card-form').show();$('no_saved_card').checked=true;return false;"><?php echo $this->__('Provide another card') ?></a>
+                    <input type="radio" name="bluesnap_card_saved" id="no_saved_card" value="no"
+                           class="validate-one-required-by-name bluesnap_card_saved" style="display:none"/>
+                </li>
+            </ul>
+        </li>
+    <?php endif ?>
+    <li>
+        <ul id="card-form" <?php if (count($cards)): ?>style="display:none;"<?php endif?>>
+
+            <?php
+            $showCcTypesDropdown = $this->getMethod()->getConfigData('show_cctypes_dropdown'); ?>
+
+            <li style="display:<?php echo $showCcTypesDropdown ? 'block':'none'?>">
+                <label for="<?php echo $_code ?>_cc_type"
+                       class="required"><em>*</em><?php echo $this->__('Credit Card Type') ?></label>
+
+                <div class="input-box">
+                    <select id="<?php echo $_code ?>_cc_type" name="payment[cc_type]"
+                            class="required-entry validate-cc-type-select">
+                        <option value=""><?php echo $this->__('--Please Select--') ?></option>
+                        <?php $_ccType = $this->getInfoData('cc_type') ?>
+                        <?php foreach ($this->getCcAvailableTypes() as $_typeCode => $_typeName): ?>
+                            <option
+                                value="<?php echo $_typeCode ?>"<?php if ($_typeCode == $_ccType): ?> selected="selected"<?php endif ?>><?php echo $_typeName ?></option>
+                        <?php endforeach ?>
+                    </select>
+
+                    <span id="cse_cc_type_valid" class="pli-cc pli-cc-valid" style="display: none;"  ></span>
+                    <span id="cse_cc_type_not_valid" class="pli-cc pli-cc-not-valid tooltip" style="display: none;"
+                          title="<?php echo $this->__("Card type does not match credit card number.")?>"
+
+                        ></span>
+
+
+                </div>
+            </li>
+            <li>
+                <label for="<?php echo $_code ?>_cc_number"
+                       class="required"><em>*</em><?php echo $this->__('Credit Card Number') ?></label>
+
+                <div class="input-box">
+                </div>
+                <div class="pli-credit-cards" id="pli-credit-cards">
+                    <?php
+                    $ccAvailableTypes=array_keys($this->getCcAvailableTypes()); ?>
+                    <?php if(in_array('VI',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-VISA"></span
+                        ><?php endif; ?><?php if(in_array('MC',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-MASTERCARD"></span
+                        ><?php endif; ?><?php if(in_array('AE',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-AMEX"></span
+                        ><?php endif; ?><?php if(in_array('DC',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-DINERS"></span
+                        ><?php endif; ?><?php if(in_array('JCB',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-JCB"></span
+                        ><?php endif; ?><?php if(in_array('SM',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-MAESTRO"></span
+                        ><?php endif; ?><?php if(in_array('SO',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-SOLO"></span
+                        ><?php endif; ?><?php if(in_array('DI',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-DISCOVER"></span
+                        ><?php endif; ?><?php if(in_array('CB',$ccAvailableTypes)) : ?><span class="pli-cc pli-cc-CARTE_BLEUE"></span
+                        ><?php endif; ?><div class="pli-clear"></div>
+                </div>
+
+                <input type="text" id="<?php echo $_code ?>_cc_number" name="payment[cc_number]"
+                       title="<?php echo $this->__('Credit Card Number') ?>"
+                       class="input-text required-entry validate-number validate-cc-number validate-cc-type" value=""
+                       data-bluesnap="encryptedCreditCard"  onchange="jQuery(this).val(jQuery(this).val().replace(/\s+/g, ''));"
+
+                    />
+                <span id="cse_cc_number_valid" class="pli-cc pli-cc-valid" style="display: none;"  ></span>
+                <span id="cse_cc_number_not_valid" class="pli-cc pli-cc-not-valid tooltip" style="display: none;"
+                      title="<?php echo $this->__("Card Number should be between 12 and 21 characters long")?>"
+                    ></span>
+
+
+
+
+
+
+
+
+                <input type="hidden" name="<?php echo $_code ?>_cc_last" id="<?php echo $_code ?>_cc_last" value=""/>
+            </li>
+            <li id="<?php echo $_code ?>_cc_type_exp_div">
+                <label for="<?php echo $_code ?>_expiration"
+                       class="required"><em>*</em><?php echo $this->__('Expiration Date') ?></label>
+
+                <div class="input-box">
+                    <div class="v-fix">
+                        <select id="<?php echo $_code ?>_expiration" name="payment[cc_exp_month]"
+                                class="month validate-cc-exp required-entry">
+                            <?php $_ccExpMonth = $this->getInfoData('cc_exp_month') ?>
+                            <?php foreach ($this->getCcMonths() as $k => $v): ?>
+                                <option
+                                    value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_ccExpMonth): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                            <?php endforeach ?>
+                        </select>
+
+
+                        ></span>
+                    </div>
+                    <div class="v-fix">
+                        <?php $_ccExpYear = $this->getInfoData('cc_exp_year') ?>
+                        <select id="<?php echo $_code ?>_expiration_yr" name="payment[cc_exp_year]"
+                                class="year required-entry">
+                            <?php foreach ($this->getCcYears() as $k => $v): ?>
+                                <option
+                                    value="<?php echo $k ? $k : '' ?>"<?php if ($k == $_ccExpYear): ?> selected="selected"<?php endif ?>><?php echo $v ?></option>
+                            <?php endforeach ?>
+                        </select>
+
+                    </div>
+                    <span id="cse_cc_expiration_valid" class="pli-cc pli-cc-valid" style="display: none;"  ></span>
+                    <span id="cse_cc_expiration_not_valid" class="pli-cc pli-cc-not-valid tooltip" style="display: none;"
+
+                </div>
+            </li>
+            <?php echo $this->getChildHtml() ?>
+            <?php if ($this->hasVerification()): ?>
+                <li id="<?php echo $_code ?>_cc_type_cvv_div">
+                    <label for="<?php echo $_code ?>_cc_cid"
+                           class="required"><em>*</em><?php echo $this->__('Card Verification Number') ?></label>
+
+                    <div class="input-box">
+                        <div class="v-fix">
+                            <input type="text" title="<?php echo $this->__('Card Verification Number') ?>"
+                                   class="input-text cvv required-entry validate-cc-cvn"
+                                   id="<?php echo $_code ?>_cc_cid" name="payment[cc_cid]" data-bluesnap="encryptedCvv"
+                                   value=""/>
+
+                            <span id="cse_cc_cid_valid" class="pli-cc pli-cc-valid" style="display: none;" ></span>
+                            <span id="cse_cc_cid_not_valid" class="pli-cc pli-cc-not-valid tooltip" style="display: none;"
+                                  title="<?php echo $this->__("Security Code should be between 3 and 4 characters long")?>"
+
+                                ></span>
+
+                        </div>
+                        <a href="#" class="cvv-what-is-this"><?php echo $this->__('What is this?') ?></a>
+                    </div>
+                </li>
+            <?php endif; ?>
+        </ul>
+        <iframe width='1' height='1' frameborder='0' scrolling='no' src='https://www.bluesnap.com/servlet/logo.gif?&s=<?php echo Mage::getSingleton('checkout/session')->getSessionId()?>'>
+    <img width='1' height='1' src='https://www.bluesnap.com/logo.gif?s=<?php echo Mage::getSingleton('checkout/session')->getSessionId()?>'>
+</iframe>
+    </li>
+</ul>
+<script type="text/javascript">
+    //<![CDATA[	
+    Payment.addMethods({
+        save: function () {
+            if (checkout.loadWaiting != false) return;
+
+            if (payment.currentMethod == 'cse') {
+                var saved_card = $$('input:checked[type=radio][name=bluesnap_card_saved]');
+                if (saved_card.length) {
+                    var card_saved_value = saved_card[0].value;
+                    if (card_saved_value == 'no' && $('<?php echo $_code ?>_cc_number').value.length < 12) {
+                        // alert('<?php echo $this->__('Card was not selected')?>');
+                        // checkout.loadWaiting = false;
+                        //return;
+                    }
+                }
+            }
+
+            jQuery("#cse_cc_type_valid").hide();
+            jQuery("#cse_cc_type_not_valid").hide();
+
+            jQuery("#cse_cc_number_valid").hide();
+            jQuery("#cse_cc_number_not_valid").hide();
+
+            jQuery("#cse_cc_expiration_valid").hide();
+            jQuery("#cse_cc_expiration_not_valid").hide();
+
+            jQuery("#cse_cc_cid_valid").hide();
+            jQuery("#cse_cc_cid_not_valid").hide();
+
+            var validator = new Validation(this.form);
+            //BSNPMG-108 dc validation fix https://github.com/Adyen/magento/commit/55095cbd6078fa9420490600ed1c9a3d3d1c173b
+            Validation.creditCartTypes.set('DC', [new RegExp('^3(?:0[0-5]|[68][0-9])[0-9]{11}$'), new RegExp('^[0-9]{3}$'), true]);
+            Validation.creditCartTypes.set('CB', [new RegExp('^4[0-9]{12}([0-9]{3})?$'), new RegExp('^[0-9]{3}$'), true]);
+
+            if (this.validate() && validator.validate()) {
+                checkout.setLoadWaiting('payment');
+                var bsnp = new BlueSnap('<?php echo $this->getpublicKey()?>');
+                bsnp.encrypt('co-payment-form');
+                $('<?php echo $_code?>_cc_last').value = $('<?php echo $_code ?>_cc_number').value.substr(-4);
+                var request = new Ajax.Request(
+                    this.saveUrl,
+                    {
+                        method: 'post',
+                        onComplete: this.onComplete,
+                        onSuccess: this.onSave,
+                        onFailure: checkout.ajaxFailure.bind(checkout),
+                        parameters: Form.serialize(this.form)
+                    }
+                );
+            }
+        }
+    });
+    //]]>
+</script>
+<style type="text/css">#payment-tool-tip{background:#FFFFFF;padding:4px;position: absolute;border: 1px solid #aaa;border-radius: 5px;}</style>
+

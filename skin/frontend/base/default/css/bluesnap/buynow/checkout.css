@@ -1,0 +1,67 @@
+/* BlueSnap Checkout page CSS */
+
+#credit-card-type {width:228px;}
+#credit-card-type li {display:block;width:51px;height:32px;
+    background:url('../../../images/bluesnap/buynow/credit-card-icons.jpg') 0 -32px no-repeat;margin:5px 6px 0 0;overflow:hidden;text-indent:-500em;float:left;-webkit-transition:all .2s;-moz-transition:all .2s;-ms-transition:all .2s;-o-transition:all .2s;transition:all .2s;}
+#credit-card-type .VI {background-position: 0px -32px;}
+#credit-card-type .MC {background-position: -51px -32px;}
+#credit-card-type .AE {background-position: -102px -32px;}
+#credit-card-type .DI {background-position: -153px -32px;}
+#credit-card-type .VI.active {background-position: 0px 0px;}
+#credit-card-type .MC.active  {background-position: -51px 0px;}
+#credit-card-type .AE.active  {background-position: -102px 0px;}
+#credit-card-type .DI.active  {background-position: -153px 0px;}
+
+
+
+span.pli-cc{
+    background:transparent url("../../../images/bluesnap/buynow/bluesnap-icons.png") 0 0 no-repeat;
+    opacity:.8;filter:alpha(opacity=80);
+    display:inline-block;
+    height:27px;margin:0;margin-top:2px;
+    margin-bottom:4px;margin-right:4px;width:41px;
+}
+
+span.pli-cc-VISA{background-position:0 0;}
+span.pli-cc-VISA.pli-active{background-position:0 -31px;}
+span.pli-cc-MASTERCARD{background-position:-48px 0;}
+span.pli-cc-MASTERCARD.pli-active{background-position:-48px -31px;}
+span.pli-cc-AMEX{background-position:-98px 0;}
+span.pli-cc-AMEX.pli-active{background-position:-98px -31px;}
+span.pli-cc-DISCOVER{background-position:-146px 0;}
+span.pli-cc-DISCOVER.pli-active{background-position:-146px -31px;}
+span.pli-cc-JCB{background-position:-195px 0;}
+span.pli-cc-JCB.pli-active{background-position:-195px -31px;}
+span.pli-cc-MAESTRO{background-position:-243px 0;}
+span.pli-cc-MAESTRO.pli-active{background-position:-243px -31px;}
+span.pli-cc-SOLO{background-position:-291px 0;}
+span.pli-cc-SOLO.pli-active{background-position:-291px -31px;}
+span.pli-cc-CARTE_BLEUE{background-position:-339px 0;}
+span.pli-cc-CARTE_BLEUE.pli-active{background-position:-339px -31px;}
+span.pli-cc-DINERS{background-position:-385px 0;}
+span.pli-cc-DINERS.pli-active{background-position:-385px -31px;}
+
+
+span.pli-cc-valid {
+    background-position: -24px -446px; 
+    width: 31px;
+    height: 27px; 
+    position:relative;
+    top:10px;
+}
+
+span.pli-cc-not-valid {
+    background-position: -53px -448px; 
+    width: 27px;
+    height: 25px;
+    position:relative;
+    top:10px;
+    
+}
+
+span#cse_cc_expiration_valid {
+    top:0;
+}
+span#cse_cc_expiration_not_valid {
+    top:0;
+}

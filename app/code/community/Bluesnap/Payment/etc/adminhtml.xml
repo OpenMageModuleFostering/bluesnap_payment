@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<config>
+
+    <menu>
+        <sales translate="title" module="bluesnap">
+            <title>Sales</title>
+            <sort_order>20</sort_order>
+            <depends>
+                <module>Mage_Sales</module>
+            </depends>
+            <children>
+                <bluesnap translate="title" module="bluesnap">
+                    <title>Bluesnap</title>
+                    <action></action>
+                    <sort_order>1000</sort_order>
+                    <children>
+                        <api_logger translate="title" module="bluesnap">
+                            <title>Api Logger</title>
+                            <action>adminhtml/bluesnap_logger/index</action>
+                            <sort_order>100</sort_order>
+                        </api_logger>
+
+
+                    </children>
+                </bluesnap>
+            </children>
+        </sales>
+    </menu>
+
+
+    <acl>
+        <resources>
+            <admin>
+                <children>
+
+                    <sales translate="title" module="bluesnap">
+                        <title>Sales</title>
+                        <children>
+                            <bluesnap translate="title">
+                                <title>Bluesnap</title>
+                                <sort_order>20</sort_order>
+                            </bluesnap>
+                        </children>
+                    </sales>
+
+
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <bluesnap translate="title" module="bluesnap">
+                                        <title>BlueSnap Payments</title>
+                                        <sort_order>100</sort_order>
+                                    </bluesnap>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

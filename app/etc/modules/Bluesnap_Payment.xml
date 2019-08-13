@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Bluesnap_Payment>
+            <codePool>community</codePool>
+            <active>true</active>
+            <depends>
+                <Mage_Paygate/>
+                <Mage_Checkout/>
+                <Mage_Sales/>
+            </depends>
+        </Bluesnap_Payment>
+    </modules>
+</config>

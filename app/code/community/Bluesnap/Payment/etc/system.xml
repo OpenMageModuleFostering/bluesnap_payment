@@ -1,0 +1,560 @@
+<?xml version="1.0"?>
+<config>
+    <sections>
+        <payment translate="label" module="payment">
+            <groups>
+                <cse translate="label" module="bluesnap">
+                    <label>BlueSnap Credit/Debit Card payments</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>27</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </active>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+                        <payment_action translate="label">
+                            <label>Payment Action</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>Bluesnap_Payment_Model_System_Config_Source_PaymentAction</source_model>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </payment_action>
+                        <cctypes translate="label">
+                            <label>Credit Card Types</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adminhtml/system_config_source_payment_cctype</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </cctypes>
+
+                        <order_status translate="label">
+                            <label>New Order Status</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status_processing</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_status>
+
+                        <sort_order translate="label">
+                            <label>Sort Order</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <frontend_class>validate-number</frontend_class>
+                        </sort_order>
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+
+                        <comment translate="label" module="bluesnap">
+                            <label>Comment</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </comment>
+                        <!--
+                           <useccv translate="label">
+                               <label>Request Card Security Code</label>
+                               <frontend_type>select</frontend_type>
+                               <source_model>adminhtml/system_config_source_yesno</source_model>
+                               <sort_order>5</sort_order>
+                               <show_in_default>1</show_in_default>
+                               <show_in_website>1</show_in_website>
+                               <show_in_store>0</show_in_store>
+                           </useccv>
+                       -->
+                        <centinel_is_mode_strict translate="label comment">
+                            <label>Severe 3D Secure Card Validation</label>
+                            <comment>Severe validation removes chargeback liability on merchant.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <centinel>1</centinel>
+                            </depends>
+                        </centinel_is_mode_strict>
+                        <centinel_api_url translate="label comment">
+                            <label>Centinel API URL</label>
+                            <comment>A value is required for live mode. Refer to your CardinalCommerce agreement.
+                            </comment>
+                            <frontend_type>text</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <centinel>1</centinel>
+                            </depends>
+                        </centinel_api_url>
+
+                        <allowspecific translate="label">
+                            <label>Payment from Applicable Countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>50</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </allowspecific>
+                        <specificcountry translate="label">
+                            <label>Payment from Specific Countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>51</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </specificcountry>
+                        <min_order_total translate="label">
+                            <label>Minimum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>98</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </min_order_total>
+                        <max_order_total translate="label">
+                            <label>Maximum Order Total</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>99</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </max_order_total>
+                        <show_cctypes_dropdown translate="label">
+                            <label>Show CcTypes Dropdown</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_cctypes_dropdown>
+                    </fields>
+                </cse>
+            </groups>
+        </payment>
+
+
+        <bluesnap translate="label" module="bluesnap">
+            <label>
+                <![CDATA[<div style="background-image: url(data:image/png;base64,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); no-repeat; width: 155px; height: 25px;background-repeat: no-repeat"></div>]]></label>
+            <tab>sales</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>351</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label" module="bluesnap">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <store_id translate="label" module="bluesnap">
+                            <label>Store ID</label>
+                            <comment>Store id provided by BlueSnap when you signed up for an account.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-number</validate>
+                        </store_id>
+                        <api_username translate="label" module="bluesnap">
+                            <label>API Username</label>
+                            <comment>This is the API Username provided by BlueSnap when you signed up for an account.
+                            </comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </api_username>
+                        <api_password translate="label" module="bluesnap">
+                            <label>API Password</label>
+                            <comment>This is the API Password provided by BlueSnap when you signed up for an account.
+                            </comment>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>31</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </api_password>
+                        <protection_key translate="label" module="bluesnap">
+                            <label>Data Protection Key</label>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </protection_key>
+                        <order_contract_id translate="label" module="bluesnap">
+                            <label>Contract ID</label>
+                            <comment>This is the contract id provided to you by BlueSnap.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>41</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <validate>validate-number</validate>
+                        </order_contract_id>
+                        <is_sandbox_mode translate="label" module="bluesnap">
+                            <label>Sandbox Mode</label>
+                            <comment>Place BlueSnap payment gateway in testing (sandbox) mode</comment>
+                            <frontend_type>select</frontend_type>
+                            <sort_orer>50</sort_orer>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </is_sandbox_mode>
+                        <is_debug_mode translate="label" module="bluesnap">
+                            <label>Is Debug Mode Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <sort_orer>10</sort_orer>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </is_debug_mode>
+                        <is_dry_run>
+                            <label>Is DryRun Mode Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <comment>Dry run mode - disables Api calls, only internal functionality is tested</comment>
+                            <sort_orer>40</sort_orer>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+
+                        </is_dry_run>
+                        <display_base_currency_to_customer>
+                            <label>Display Base Currency To Customer</label>
+                            <comment>Should we display base currency amount in customer emails?</comment>
+                            <frontend_type>select</frontend_type>
+                            <sort_orer>50</sort_orer>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+
+                        </display_base_currency_to_customer>
+
+                        <callback_url translate="label" module="bluesnap">
+                            <label>Callback Url</label>
+                            <comment>Back to seller url.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+
+                        </callback_url>
+
+
+                    </fields>
+                </general>
+                <logger translate="label" module="bluesnap">
+                    <label>Logger</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>12</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+
+
+                        <file_priority translate="label">
+                            <label>File Logger Priority Level Filter</label>
+                            <frontend_type>text</frontend_type>
+
+                            <frontend_type>select</frontend_type>
+                            <source_model>Bluesnap_Payment_Model_System_Config_Source_Priorities</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <comment>Choose the lowest priority level to be logged. Default is disabled.</comment>
+                        </file_priority>
+
+
+                        <db_priority translate="label">
+                            <label>DB Logger Priority LevelFilter</label>
+                            <frontend_type>text</frontend_type>
+
+                            <frontend_type>select</frontend_type>
+                            <source_model>Bluesnap_Payment_Model_System_Config_Source_Priorities</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <comment>Choose the lowest priority level to be logged. Default is disabled.</comment>
+
+                        </db_priority>
+
+                        <mail_priority translate="label">
+                            <label>Mail Logger Priority Level Filter</label>
+                            <frontend_type>text</frontend_type>
+
+                            <frontend_type>select</frontend_type>
+                            <source_model>Bluesnap_Payment_Model_System_Config_Source_Priorities</source_model>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <comment>Choose the lowest priority level to be logged. Default is disabled.</comment>
+                        </mail_priority>
+
+                        <mail_subject translate="label">
+
+                            <label>Mail Subject</label>
+                            <frontend_type>text</frontend_type>
+
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+
+                        </mail_subject>
+
+                        <mail_template translate="label">
+
+                            <label>Mail Template</label>
+                            <frontend_type>textarea</frontend_type>
+
+                            <sort_order>400</sort_order>
+                            <show_in_default>1</show_in_default>
+
+                        </mail_template>
+
+                        <mail_recipient_list translate="label">
+
+                            <label>Mail Logger Recipient List</label>
+                            <frontend_type>textarea</frontend_type>
+
+                            <sort_order>500</sort_order>
+                            <show_in_default>1</show_in_default>
+
+                        </mail_recipient_list>
+			<collect_data_for translate="label">
+                            <label>Save logs period (in days)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>600</sort_order>
+                            <show_in_default>1</show_in_default>
+			<comment><![CDATA[Older logs will be removed]]></comment>
+                        </collect_data_for>			
+                    </fields>
+
+                </logger>
+                <!--  <buynow>
+                      <label>BlueSnap BuyNow</label>
+                      <frontend_type>text</frontend_type>
+                      <sort_order>20</sort_order>
+                      <show_in_default>1</show_in_default>
+                      <show_in_website>1</show_in_website>
+                      <show_in_store>0</show_in_store>
+                      <fields>-->
+                <!-- <active translate="label" module="bluesnap">
+                     <label>Enabled</label>
+                     <frontend_type>select</frontend_type>
+                     <sort_orer>10</sort_orer>
+                     <source_model>adminhtml/system_config_source_yesno</source_model>
+                     <sort_order>1</sort_order>
+                     <show_in_default>1</show_in_default>
+                     <show_in_website>1</show_in_website>
+                     <show_in_store>0</show_in_store>
+                 </active>
+                 <title translate="label" module="bluesnap">
+                     <label>Title</label>
+                     <comment>Type here the name that you want the user to see</comment>
+                     <frontend_type>text</frontend_type>
+                     <sort_order>20</sort_order>
+                     <show_in_default>1</show_in_default>
+                     <show_in_website>1</show_in_website>
+                     <show_in_store>1</show_in_store>
+                 </title>                                              -->
+                <!--<comment translate="label" module="bluesnap">
+                    <label>Comment</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </comment>         -->
+                <!--<allowspecific translate="label" module="bluesnap">
+                    <label>Payment from Applicable Countries</label>
+                    <frontend_type>allowspecific</frontend_type>
+                    <sort_order>50</sort_order>
+                    <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                </allowspecific>
+                <specificcountry translate="label" module="bluesnap">
+                    <label>Payment from Specific Countries</label>
+                    <frontend_type>multiselect</frontend_type>
+                    <sort_order>51</sort_order>
+                    <source_model>adminhtml/system_config_source_country</source_model>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <can_be_empty>1</can_be_empty>
+                </specificcountry>
+                <min_order_total translate="label" module="bluesnap">
+                    <label>Minimum Order Total</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>98</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                </min_order_total>
+                <max_order_total translate="label" module="bluesnap">
+                    <label>Maximum Order Total</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>99</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                </max_order_total>
+                <sort_order translate="label" module="bluesnap">
+                    <label>Sort Order</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>100</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <frontend_class>validate-number</frontend_class>
+                </sort_order>                                                           -->
+                <!--  </fields>
+              </buynow>-->
+                <cse>
+                    <label>Client-Side Encryption payment form</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>30</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <!-- <active translate="label" module="bluesnap">
+                             <label>Enabled</label>
+                             <frontend_type>select</frontend_type>
+                             <sort_orer>10</sort_orer>
+                             <source_model>adminhtml/system_config_source_yesno</source_model>
+                             <sort_order>1</sort_order>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>0</show_in_store>
+                         </active>
+                         <title translate="label" module="bluesnap">
+                             <label>Title</label>
+                             <frontend_type>text</frontend_type>
+                             <sort_order>20</sort_order>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>1</show_in_store>
+                         </title>                                                       -->
+                        <!--   <comment translate="label" module="bluesnap">
+                               <label>Comment</label>
+                               <frontend_type>text</frontend_type>
+                               <sort_order>30</sort_order>
+                               <show_in_default>1</show_in_default>
+                               <show_in_website>1</show_in_website>
+                               <show_in_store>1</show_in_store>
+                           </comment>     -->
+                        <cse_public_key translate="label" module="bluesnap">
+                            <label>CSE Public Key</label>
+                            <comment>Client Side Encryption (CSE) Key, provided to you by BlueSnap.</comment>
+                            <frontend_type>obscure</frontend_type>
+                            <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
+                            <sort_order>31</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </cse_public_key>
+                        <!-- <allowspecific translate="label" module="bluesnap">
+                             <label>Payment from Applicable Countries</label>
+                             <frontend_type>allowspecific</frontend_type>
+                             <sort_order>50</sort_order>
+                             <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>0</show_in_store>
+                         </allowspecific>
+                         <specificcountry translate="label" module="bluesnap">
+                             <label>Payment from Specific Countries</label>
+                             <frontend_type>multiselect</frontend_type>
+                             <sort_order>51</sort_order>
+                             <source_model>adminhtml/system_config_source_country</source_model>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>0</show_in_store>
+                             <can_be_empty>1</can_be_empty>
+                         </specificcountry>
+                         <min_order_total translate="label" module="bluesnap">
+                             <label>Minimum Order Total</label>
+                             <frontend_type>text</frontend_type>
+                             <sort_order>98</sort_order>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>0</show_in_store>
+                         </min_order_total>
+                         <max_order_total translate="label" module="bluesnap">
+                             <label>Maximum Order Total</label>
+                             <frontend_type>text</frontend_type>
+                             <sort_order>99</sort_order>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>0</show_in_store>
+                         </max_order_total>
+                         <sort_order translate="label" module="bluesnap">
+                             <label>Sort Order</label>
+                             <frontend_type>text</frontend_type>
+                             <sort_order>100</sort_order>
+                             <show_in_default>1</show_in_default>
+                             <show_in_website>1</show_in_website>
+                             <show_in_store>0</show_in_store>
+                             <frontend_class>validate-number</frontend_class>
+                         </sort_order>           -->
+                    </fields>
+                </cse>
+            </groups>
+        </bluesnap>
+
+
+    </sections>
+</config>

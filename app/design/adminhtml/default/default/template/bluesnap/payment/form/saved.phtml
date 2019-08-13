@@ -1,0 +1,16 @@
+<?php
+/**
+ * @see Bluesnap_Payment_Block_Payment_Form_Saved
+ * @var $this Bluesnap_Payment_Block_Payment_Form_Saved
+ */
+?>
+
+<?php $_code=$this->getMethodCode() ?>
+<ul class="form-list" id="payment_form_<?php echo $_code ?>" style="display:none;">
+    <?php foreach ($this->getCards() as $id => $card):?>
+        <li>
+            <input type="radio" name="bluesnap_card_saved" id="<?php echo $_code.'_'.$id?>" value="<?php echo $card['enc_type']?>" class="validate-one-required-by-name bluesnap_card_saved"/>
+            <label for="<?php echo $_code.'_'.$id?>" style="padding-left: 10px"><?php echo $card['type']?>-<?php echo $card['card']?></label>
+        </li>
+    <?php endforeach?>
+</ul>

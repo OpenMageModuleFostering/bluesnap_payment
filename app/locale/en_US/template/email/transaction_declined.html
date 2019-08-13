@@ -1,0 +1,71 @@
+<!--@subject Order #{{var order_id}} Payment declined @-->
+<!--@vars
+{"var reason":"Transaction Declined Reason",
+"var checkoutType":"Checkout Type",
+"var customerEmail":"Customer Email",
+"var customer":"Customer Name",
+"var items":"Shopping Cart Items",
+"var total":"Total",
+"var billingAddress.format('html')":"Billing Address",
+"var shippingAddress.format('html')":"Shipping Address",
+"var shippingMethod":"Shipping Method",
+"var paymentMethod":"Payment Method",
+"var dateAndTime":"Date and Time of Transaction"}
+@-->
+
+<table>
+    <thead>
+    <tr>
+        <th>Order #{{var order_id}} Payment declined.</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+        {{if reason}}
+            <p>
+                <b>Reason</b><br />
+                {{var reason}}
+            </p>
+          {{/if}}  
+            <p>
+                <b>Checkout Type</b><br />
+                {{var checkoutType}}
+            </p>
+            <p>
+                <b>Customer:</b><br />
+                <a href="mailto:{{var customerEmail}}">{{var customer}}</a> &lt;{{var customerEmail}}&gt;
+            </p>
+            <p>
+                <b>Items</b><br />
+                {{var items}}
+            </p>
+            <p>
+                <b>Total Canceled:</b> {{var total}} <br />
+                <b>[Base Total Canceled:]</b> {{var base_total}} <br />
+                <b>Bluesnap Total Canceled:</b> {{var bluesnap_total}} <br />
+            </p>
+            <p>
+                <b>Billing Address:</b><br />
+                {{var billingAddress.format('html')}}
+            </p>
+            <p>
+                <b>Shipping Address:</b><br />
+                {{var shippingAddress.format('html')}}
+            </p>
+            <p>
+                <b>Shipping Method:</b><br />
+                {{var shippingMethod}}
+            </p>
+            <p>
+                <b>Payment Method:</b><br />
+                {{var paymentMethod}}
+            </p>
+            <p>
+                <b>Date & Time:</b><br />
+                {{var dateAndTime}}
+            </p>
+        </td>
+    </tr>
+    </tbody>
+</table>
