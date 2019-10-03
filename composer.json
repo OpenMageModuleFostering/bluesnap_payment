@@ -1,7 +1,7 @@
 {
-    "name": "OpenMageModuleFostering\/bluesnap_payment",
+    "name": "openmage-module-fostering\/bluesnap_payment",
     "type": "magento-module",
-    "license": "Community-GPL",
+    "license": "OSL-3.0",
     "homepage": "",
     "description": "Magento Extension for BlueSnap payment",
     "authors": [
